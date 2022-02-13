@@ -1,0 +1,23 @@
+<section class="clients-insert">
+  <h2 class="clients-insert__title">Наши клиенты</h2>
+  <div class="warp clients-insert__warp">
+    <div class="slider">
+      <div class="slider-list">
+        <div class="clients-insert__slider slider-track" *ngIf="company">
+          <div class="slide" *ngFor="let i of company">
+            <app-clients-card [company]="i" routerLink="/clients"></app-clients-card>
+          </div>
+        </div>
+      </div>
+
+      <div class="slider-arrows">
+        <button type="button" class="prev">
+          <div class="fa fa-chevron-left"></div>
+        </button>
+        <button type="button" class="next">
+          <div class="fa fa-chevron-right"></div>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>

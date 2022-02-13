@@ -1,0 +1,69 @@
+.counter {
+  background: #fff;
+  box-shadow: inset 0px 3px 6px #00000029;
+  border-radius: 8px;
+  padding: 7px;
+  display: flex;
+  gap: 7px;
+  width: fit-content;
+  overflow: hidden;
+}
+
+.counter .counter__button {
+  padding: 2px;
+  flex: 0 0 38px;
+  width: 38px;
+  display: block;
+  aspect-ratio: 1;
+  border-radius: 6px;
+  border-width: 0;
+  box-shadow: 0 0 0 #00000000;
+}
+.counter .counter__order_button {
+  padding: 2px;
+  border-radius: 6px;
+  border-width: 0;
+  box-shadow: 0 0 0 #00000000;
+  flex: 0 0 146px;
+  width: 146px;
+  display: block;
+}
+
+.counter .counter__number {
+  flex: 0 0 38px;
+  background: transparent;
+  border: none;
+  width: 38px;
+  font: normal normal bold 17px/15px Montserrat;
+  color: #414141;
+  text-align: center;
+  display: block;
+}
+
+
+.counter .counter__error {
+  animation: 0.3s ease-in 0s 1 forwards error_blink;
+}
+@keyframes error_blink { from { color: #f00; } to { color: #414141; }  }
+@media (max-width: 839px) {
+  .counter {
+    padding: 3px;
+    gap: 3px;
+  }
+  .counter .counter__button {
+    padding: 2px;
+    flex: 0 0 30px;
+    width: 30px;
+    aspect-ratio: 1;
+  }
+  .counter .counter__order_button { 
+    padding: 2px;
+    flex: 0 0 100px;
+    width: 100px;
+    font: normal normal bold 11px/17px "Montserrat";
+  }
+  .counter .counter__number {
+    flex: 0 0 38px;
+    width: 38px;
+  }
+}

@@ -1,0 +1,150 @@
+.product__container {
+  padding: 45px 20px 93px 20px;
+  background: #f3f3f3;
+}
+
+ 
+
+.product__price-line {
+  display: flex;
+  gap: 40px;
+  width: fit-content;
+  align-items: center;
+}
+.product__price {
+  font-size: 41px;
+  line-height: 1.2;
+  font-family: "Montserrat";
+  font-weight: bold;
+  text-align: left;
+  color: #dd2958;
+}
+
+.product__content-title {
+  margin: 50px 0 0 0;
+  font: normal normal bold 28px/37px "Montserrat";
+  letter-spacing: 0px;
+  color: #242424;
+}
+.product__text p {
+  margin: 0 0 20px 0;
+  font: normal normal normal 14px/22px "Montserrat";
+  letter-spacing: 0px;
+  color: #242424;
+}
+
+.product__button-line {
+  padding: 50px 0;
+  display: flex;
+  gap: 40px;
+}
+
+.product__form {
+  padding: 20px 20px 100px 20px;
+}
+.product__form .product__content-title {
+  color: #dd2958;
+  margin-bottom: 20px;
+}
+.product__form .product__text {
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+.product__form-item {
+  border-radius: 10px;
+  border: 1px solid #f0f0f0;
+  margin-bottom: 25px;
+  position: relative;
+  padding: 8px;
+}
+.product__label {
+  color: #888;
+  background: #fff;
+  padding: 0 10px;
+  font-size: 11px;
+  font-family: "Montserrat";
+  position: absolute;
+  z-index: 2;
+  left: 23px;
+  top: -6px;
+}
+.product__form-item textarea {
+  width: 100%;
+  box-sizing: border-box;
+  height: 150px;
+  padding: 20px;
+  border: none;
+  resize: vertical;
+  font-size: 16px;
+}
+.product__form-item textarea:focus {
+  outline: none;
+  background: #f6f6f6;
+}
+.product__form-item input {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.product__form-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.product__form-file {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  padding: 10px;
+  background: #d1ebff;
+  border-radius: 6px;
+  text-shadow: 2px 4px 16px rgba(0, 0, 0, 0.2);
+}
+.product__form-file i {
+  font-size: 28px;
+  color: #0a4263;
+}
+.product__form-file a {
+  font-size: 15px;
+  color: #0a4263;
+  text-decoration: none;
+  max-width: 200px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+.product__form-file a small {
+  color: #0a426388;
+}
+.product__form-file .product__form-times {
+  font-size: 15px;
+  text-decoration: none;
+  color: #889;
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+}
+.product__form-file .product__form-times:hover {
+  color: rgb(117, 31, 31);
+}
+.product_form-constraint {
+  text-align: right;
+  color: #888;
+  font-size: 12px;
+}
+@media (max-width: 824px) {
+  .product__price-line {
+    gap: 10px;
+  }
+  .product__price {
+    font-size: 18px;
+    line-height: 2;
+  }
+  .product__button-line {
+    gap: 10px;
+  }
+  .product__button-line .button {
+    width: auto;
+  }
+}

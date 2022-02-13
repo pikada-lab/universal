@@ -1,0 +1,63 @@
+:host {
+  background: #ffffff 0% 0% no-repeat padding-box;
+  box-shadow: inset 0px 3px 6px #00000045;
+  border-radius: 8px;
+  display: flex;
+  padding: 6px;
+  width: 800px;
+  gap: 6px;
+}
+
+.search-form__input {
+  font: normal normal normal 20px/18px Montserrat;
+  flex: 1;
+  padding: 0 20px;
+  border: none;
+}
+
+.search-form__button {
+  width: 172px;
+  height: 41px;
+  border-radius: 6px;
+  padding: 0;
+  font: normal normal bold 14px/30px "Montserrat";
+}
+
+@media (max-width: 1380px) {
+  :host  {
+    box-shadow: inset 0px 2px 4px #00000045;
+    border-radius: 6px;
+    display: flex;
+    padding: 4px;
+    width: 600px;
+    gap: 6px;
+  }
+
+  .search-form__input {
+    font: normal normal normal 16px/18px Montserrat;
+    padding: 0 10px;
+  }
+
+  .search-form__button {
+    width: 140px;
+    height: 30px;
+    border-radius: 5px;
+    font: normal normal bold 12px/16px "Montserrat";
+  }
+}
+
+@media (max-width: 1064px) {
+  
+}
+@media (max-width: 840px) {
+
+  :host {
+    width: calc(100% - 8px);
+  }
+  .search-form__button {
+    width: 110px;
+    height: 30px;
+    border-radius: 5px;
+    font: normal normal bold 11px/16px "Montserrat";
+  }
+}

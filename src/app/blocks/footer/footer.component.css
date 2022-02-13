@@ -1,0 +1,89 @@
+.footer {
+  background: #dcdcdc;
+}
+
+.footer__warp {
+  display: flex;
+  gap: 16px;
+}
+.footer__logo {
+  margin-top: 60px;
+}
+
+.footer__nav {
+  min-height: 200px;
+}
+
+.footer__right {
+  margin-top: 20px;
+  background-color: #c2c2c2;
+  padding: 14px 0;
+  font: normal normal bold 12px/22px "Montserrat";
+  color: #787878;
+}
+
+.logo {
+  background: url("/assets/logo.apt2@2x.png") 0 0 no-repeat padding-box;
+  background-size: cover;
+  height: 55px;
+  width: 267px;
+}
+.footer__col-2 {
+  flex: 2;
+}
+
+.footer__col-4 {
+  flex: 4;
+}
+
+.footer__nav {
+  padding: 30px 0 0 0;
+}
+
+.footer__nav-title { 
+  font: normal normal bold 14px/22px "Montserrat";
+  color: #242424;
+}
+
+.footer__warp p {
+  font: normal normal normal 12px/22px "Montserrat";
+  color: #242424;
+}
+
+.footer__warp a {
+  text-decoration: none;
+  cursor: pointer;
+  color: #242424;
+  transition: color 0.3s ease-in-out;
+}
+
+
+@media (max-width: 1380px) {
+  .footer__nav-title { 
+    font: normal normal bold 12px/20px "Montserrat";
+    color: #242424;
+  }
+  
+  .footer__warp p {
+    font: normal normal normal 11px/20px "Montserrat";
+    color: #242424;
+  }
+}
+
+
+@media (max-width: 1064px) {
+  .footer {
+    background: #fff; 
+  }
+  .footer__nav {
+    display: none;
+  }
+  .footer__right {
+    background: #fff;
+    padding-top: 120px;  
+  } 
+  .footer__warp {
+    display: block;
+    text-align: center;
+  }
+}

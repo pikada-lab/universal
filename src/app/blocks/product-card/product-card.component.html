@@ -1,0 +1,20 @@
+<a class="product-card" [routerLink]="'/products/' + product.id" *ngIf="product">
+  <div class="product-card__image" *ngIf="img">
+    <img [src]="img" />
+  </div>
+  <div class="product-card__stereo-box">
+    <app-chips [product]="product"></app-chips>
+    <h2 class="product-card__title">
+      {{ product.title }}
+    </h2>
+    <p class="product-card-description">
+      {{ product.subtitle }}
+    </p>
+    <div class="product-card__price-line">
+      <div class="product-card__price" *ngIf="product.price">
+        {{ product.price | numberFor3: 2 }} ₽
+      </div>
+      <div class="product-card__logo"></div>
+    </div>
+  </div>
+</a>

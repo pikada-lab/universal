@@ -1,0 +1,68 @@
+<!-- start cart-item -->
+<div class="cart-item" *ngIf="product">
+  <div class="cart-item__content">
+    <div class="cart-item__header">
+      <div class="catr-item__about">
+        <div class="cart-item__name">
+          {{ product.title }}
+        </div>
+        <div class="cart-item__description">
+          {{ product.subtitle }}
+        </div>
+      </div>
+
+      <div class="cart-item__image-mobile">
+        <img [src]="product.img" alt="Product" [routerLink]="'/products/'+product.id" />
+      </div>
+    </div>
+    <div class="cart-item__tag"  *ngIf="item.special">
+      <div class="button button_fill cart-item__button" (click)="openSmeta.emit(true)">
+        <div class="cart-item__icon">
+          <i class="fas fa-briefcase-medical"></i>
+        </div>
+        <div class="cart-item__text" >По вашей описи, cмотреть опись</div>
+        <div class="cart-item__text-mobile"   >Cмотреть опись</div>
+      </div>
+    </div>
+    <div class="cart-item__counter">
+      <!-- counter -->
+      <app-counter (changeCount)="setQtty($event)" [count]='item.qtty'></app-counter>
+      <!-- end counter -->
+      <div class="cart-item__price"  *ngIf="!item.special && summ > 0">{{ summ | numberFor3:2 }} ₽</div>
+
+      <div class="cart-item__close-mobile" (click)="remove()">
+        <div class="fa fa-times"></div>
+      </div>
+    </div>
+    <div class="cart-item__total">
+      <span *ngIf="item.price > 0"> Укладка: {{ item.price | numberFor3:2 }}₽.</span> 
+      <span *ngIf="item.priceCase > 0"> Бокс: {{ item.priceCase | numberFor3:2 }}₽</span> 
+      <span *ngIf="item.priceCase > 0 && item.price > 0"> = {{ (item.priceCase + item.price ) | numberFor3:2}}₽</span> 
+    </div>
+  </div>
+  <div class="cart-item__image">
+    <img [src]="product.img" alt="Product"  [routerLink]="'/products/'+product.id" />
+  </div>
+  <div class="cart-item__close" (click)="remove()">
+    <div class="fa fa-times"></div>
+  </div>
+</div>
+<!-- end cart-item -->
+<ng-container *ngIf="product" > 
+  <app-modal title="Перечень прикреплённых документов" [open]="openSmeta" [buttons]="buttonsSmeta">
+      <h2> {{ product.title }}</h2>
+      <p><b> {{ product.subtitle  }}</b></p>
+      <markdown>{{ item.customDescription  }}</markdown>
+       
+    <p *ngIf="item.customDescriptionFile" class="product__form-files">
+      <ng-container *ngFor="let file of item.customDescriptionFile"> 
+
+      <div  class="product__form-file">
+       <i [class]="'fa '+getIcon(file.type)"></i>
+        <a [href]="'/api/files/' + file.id" target="_blank">Скачать {{file.name}}<br/> <small>{{file.size | bytes:2}} // Осталось: {{ file.mustDelete | date: 'hh:mm:ss'}}</small></a>  
+        <!-- <i class="fa fa-times product__form-times" (click)="deleteFile(file.id)"></i>  -->
+      </div>
+    </ng-container>
+    </p>
+  </app-modal>
+</ng-container>

@@ -1,0 +1,15 @@
+<!-- start best -->
+<section class="best" *ngIf="product">
+  <div class="warp best__warp">
+    <div class="best__image">
+      <img [src]="img" />
+    </div>
+    <div class="best__text">
+      <p class="best__p">Лучшее предложение</p>
+      <h3>{{ product.title }}</h3>
+      <p>{{ product.subtitle }}</p>
+      <a class="button button_fill best_botton" [routerLink]="'/products/' + product.id">Подробнее</a>
+    </div>
+  </div>
+</section>
+<!-- end best -->

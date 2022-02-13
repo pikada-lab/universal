@@ -1,0 +1,172 @@
+<div class="cart-page">
+  <div class="warp cart-page__warp">
+    <div class="cart-page__list">
+      <div class="cart-page__empty" *ngIf="!this.items.length">
+        Корзина пуста
+      </div>
+
+      <app-cart-item *ngFor="let i of this.items" [item]="i"></app-cart-item>
+    </div>
+
+    <div class="cart-page__form">
+      <div class="cart-form">
+        <h1>Корзина</h1>
+        <p>
+          Цена доставки в заказ не входит, она будет добавлена позже
+          администратором.
+        </p>
+        <div class="cart-form__container">
+          <div class="cart-form__form-item">
+            <div class="cart-form__label">ФИО</div>
+            <input
+              type="text"
+              [maxLength]="32"
+              [(ngModel)]="cart.name"
+              (change)="save()"
+            />
+          </div>
+          <div class="cart-form__row">
+            <div
+              [class]="
+                'cart-form__form-item ' +
+                (isValidPhone ? 'cart-form__valid' : '')
+              "
+            >
+              <div class="cart-form__label">Телефон</div>
+              <input
+                type="text"
+                [maxLength]="32"
+                [(ngModel)]="cart.phone"
+                (keyup)="validPhone()"
+                (change)="save()"
+              />
+            </div>
+
+            <div
+              [class]="
+                'cart-form__form-item ' +
+                (isValidMail ? 'cart-form__valid' : '')
+              "
+            >
+              <div class="cart-form__label">Почта</div>
+              <input
+                type="text" 
+                [maxLength]="64"
+                [(ngModel)]="cart.mail"
+                (keyup)="validMail()"
+                (change)="save()"
+              />
+            </div>
+          </div>
+          <div class="cart-form__form-item">
+            <div class="cart-form__label">Адрес</div>
+            <input type="text" [(ngModel)]="cart.address" (change)="save()" />
+          </div>
+          <div class="cart-form__form-item">
+            <div class="cart-form__label">Способ оплаты</div>
+            <input
+              type="radio"
+              name="payment"
+              id="payment-1"
+              value="1"
+              [(ngModel)]="cart.payment"
+              (change)="save()"
+            />
+            <label for="payment-1">Безналичный расчёт</label><br />
+            <input
+              type="radio"
+              name="payment"
+              id="payment-2"
+              value="2"
+              [(ngModel)]="cart.payment"
+              (change)="save()"
+            />
+            <label for="payment-2">Наличный расчёт</label>
+          </div>
+          <div class="cart-form__form-item">
+            <div class="cart-form__label">Способ получения</div>
+            <input
+              type="radio"
+              name="delivary"
+              id="delivary-1"
+              value="1"
+              [(ngModel)]="cart.delivery"
+              (change)="save()"
+            />
+            <label for="delivary-1">Самовызов</label><br />
+            <input
+              type="radio"
+              name="delivary"
+              id="delivary-2"
+              value="2"
+              [(ngModel)]="cart.delivery"
+              (change)="save()"
+            />
+            <label for="delivary-2">Доставка курьерской службой</label><br />
+            <input
+              type="radio"
+              name="delivary"
+              id="delivary-3"
+              value="3"
+              [(ngModel)]="cart.delivery"
+              (change)="save()"
+            />
+            <label for="delivary-3">Доставка курьером за МКАД</label>
+          </div>
+
+          <p class="cart-form__text-constraint">
+            {{ cart.comment?.length ?? 0 | numberFor3 }} из
+            {{ maxCustomDescription | numberFor3 }} символов
+          </p>
+
+          <div class="cart-form__form-item">
+            <div class="cart-form__label">Комментарий</div>
+            <textarea
+              class="cart-form__textarea"
+              [maxlength]="maxCustomDescription"
+              [(ngModel)]="cart.comment"
+              (change)="save()"
+            ></textarea>
+          </div>
+
+          <div class="cart-form__form-item">
+            <div class="cart-form__label">Ваш перечень файлом</div>
+            <input type="file" #file multiple (change)="saveFiles()" />
+          </div>
+        </div>
+        <p
+          *ngIf="this.cart?.customDescriptionFile?.length"
+          class="product__form-files"
+        >
+          <ng-container *ngFor="let file of this.cart.customDescriptionFile">
+            <div class="product__form-file">
+              <i [class]="'fa ' + getIcon(file.type)"></i>
+              <a [href]="'/api/files/' + file.id" target="_blank">
+                Скачать {{ file.name }}<br />
+                <small>
+                  {{ file.size | bytes: 2 }} // Осталось:
+                  {{ file.mustDelete | date: "hh:mm:ss" }}
+                </small>
+              </a>
+              <i
+                class="fa fa-times product__form-times"
+                (click)="deleteFile(file.id)"
+              ></i>
+            </div>
+          </ng-container>
+        </p>
+
+        <div class="cart-form__action">
+          <button class="button button_fill" (click)="order()">
+            Оформить заказ
+          </button>
+          <div class="cart-form__total">{{ calc() | numberFor3: 2 }} ₽</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-modal [title]="'Заказ ' + id" [open]="openForm">
+  <p>Ваш заказ принят в обработку</p>
+  <h1>Номер заказа: {{ id }}</h1>
+</app-modal>

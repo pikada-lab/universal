@@ -1,0 +1,104 @@
+.clients-insert {
+  background: #ffffff;
+  padding: 20px 0;
+}
+
+.clients-insert__title {
+  text-align: center;
+  padding-bottom:10px;
+}
+
+.clients-insert__warp {
+  display: flex;
+  gap: 16px;
+}
+.clients-insert__slider {
+  padding: 0;
+  list-style: none;
+}
+ 
+.slider-arrows {
+  display: none;
+}
+
+.slider {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  /* Чтобы во время перетаскивания слайда ничего не выделить внутри него */
+  user-select: none;
+  /* Чтобы запретить скролл страницы, если мы начали двигать слайдер по оси X */
+  touch-action: pan-y;
+}
+
+/* Если где-то внутри слайдера будут изображения,
+то нужно задать им pointer-events: none,
+чтобы они не перетаскивались мышью */
+
+.slide img {
+  pointer-events: none;
+}
+
+.slider-list {
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+}
+
+.slider-list.grab {
+  cursor: grab;
+}
+
+.slider-list.grabbing {
+  cursor: grabbing;
+}
+
+.slider-track {
+  display: flex;
+}
+
+.slide {
+  flex: 0 0 50%;
+  width: 50%;
+  box-sizing: border-box;
+  padding: 20px;
+  height: 240px;
+  /* Чтобы слайды не сжимались */
+  flex-shrink: 0;
+  display: flex;
+}
+
+.slider-arrows {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.next,
+.prev {
+  background: none;
+  border: none;
+  margin: 0 10px;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.next.disabled,
+.prev.disabled {
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+@media (max-width: 1640px) {
+ 
+  .slide {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 200px;
+  }
+}
+
+@media (max-width: 840px) {
+  .clients-insert {
+    display: none;
+  } 
+} 

@@ -1,0 +1,111 @@
+.popular {
+  background: #f3f3f3;
+  padding: 20px 0 40px 0;
+}
+
+.popular__title {
+  text-align: center; 
+  margin-bottom: 10px;
+}
+
+.popular__descriptor {
+  text-align: center;
+  font: normal normal normal 16px/24px "Montserrat";
+  letter-spacing: 0px;
+  color: #242424;
+  margin: 16px auto 26px auto;
+  max-width: 522px;
+}
+
+.popular__search-form {
+  margin: 0 auto 50px auto;
+}
+
+.popular__warp {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 20px 16px; 
+  width: 1640px;
+  margin-bottom: 40px;
+}
+
+.popular__more {
+  text-align: center; 
+}
+
+.popular__more_button {
+  width: auto;
+  max-width: 500px;
+  display: block;
+  margin: 0 auto 0px auto;
+}
+
+@media (max-width: 1640px) {
+  .popular__warp {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px 16px;
+    margin-bottom: 30px;
+    width: 1226px;
+  }
+}
+
+@media (max-width: 1380px) {
+  .popular__warp {
+    margin-bottom: 40px;
+    width: 1163px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .popular__warp {
+    grid-template-columns: 1fr 1fr; 
+    width: 770px;
+  }
+}
+@media (max-width: 1064px) {
+}
+
+@media (max-width: 840px) {
+  .popular  .popular__search-form {
+    margin: 0 auto 20px auto;
+    width: 480px;
+  }
+  .popular {
+    padding: 1px 16px 40px 16px;
+  }
+  .popular__title {
+    font-size: 22px;
+    line-height: 1.5;
+  }
+  .popular__warp {
+    gap: 20px 16px;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 480px;
+  }
+  .popular__descriptor  {
+
+    margin: 16px auto 20px auto;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 520px) {
+  .popular  .popular__search-form {
+    margin: 0 auto 20px auto;
+    width: auto;
+  }
+  .popular__warp {
+    grid-template-columns: 1fr 1fr;
+    width: 318px;
+  }
+
+}
+@media (max-width: 359px) {
+
+
+  .popular__warp {
+    grid-template-columns: 1fr;
+    width: 154px;
+  }
+}

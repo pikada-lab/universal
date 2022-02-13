@@ -1,0 +1,115 @@
+<section class="product-header" *ngIf="product">
+  <div class="warp product-header__warp">
+    <div class="product-header__image">
+      <img [src]="img" alt="Product" />
+    </div>
+    <div class="product-header__naming">
+      <div class="product-header__min-container">
+        <app-chips [product]="product" class="product-header__chips"></app-chips>
+        <h1 class="product-header__title">
+          {{ product.title }}
+        </h1>
+        <p class="product-header__description">
+          {{ product.subtitle }}
+        </p>
+      </div>
+      <div class="product-header__hh">
+        <i class="fa fa-medkit"></i>
+        <a href="/products"
+          >{{ product.subtitle }}</a
+        >
+        <i class="fa fa-chevron-right"></i>
+        <a href="#3">{{ product.title }}</a>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- end product-header -->
+
+<div class="product__container" *ngIf="product">
+  <div class="warp product__warp">
+    <div class="product__price-line">
+      <!-- counter -->
+      <app-counter
+        [order]="order"
+        [remove]="remove"
+        [count]="count"
+        (changeCount)="count = $event"
+        [isOnCart]="isOnCart"
+      ></app-counter>
+      <!-- end counter -->
+      <div class="product__price" *ngIf="product.price">
+        {{ product.price * count | numberFor3: 2 }} ₽
+      </div>
+    </div>    
+    <!-- start boxing -->
+    <app-boxing *ngIf="cases" [cases]="cases" [caseId]="caseId" (changeCaseId)="changeCaseId($event)"></app-boxing>
+  
+    <!-- end boxing -->
+    <h2 class="product__content-title">Описание</h2>
+    <section class="product-table product__text">
+      <markdown>
+        {{ product.text }}
+      </markdown>
+    </section>
+    <!-- end product-table -->
+
+    <div class="product__button-line" *ngIf="product">
+      <a class="button button_fill" [href]="'/api/pdf/' + product.id" target="_blank">Скачать опись в MD</a>
+      <button class="button button_fill">Скачать приказа PDF</button>
+    </div>
+  </div>
+</div>
+<section class="warp" id="custom-order">
+  <div class="product__form">
+    <h2 class="product__content-title">Заказать Аптечку с вашим перечнем</h2>
+    <p class="product__text">
+      Если хотите заказать аптечку с расширенным перечнем, то вам необходимо
+      дописать нужные товары в форму или прикрепить файл с перечнем аптечки. Наш
+      администратор свяжется с Вами и утвердит конечный перечень. После заказа
+      просмотр ваших данных будет доступно в корзине.
+    </p>
+    <p class="product_form-constraint">{{ customDescription.length | numberFor3}} из {{maxCustomDescription | numberFor3}} символов</p>
+   
+    <div class="product__form-item">
+      <div class="product__label">Ваш перечень</div>
+      <textarea
+        class="product__textarea"
+        [maxLength]="maxCustomDescription"
+        (keyup)="alert($event)"
+        (change)="alert($event)"
+        [(ngModel)]="customDescription"
+      ></textarea>
+    </div>
+     <div class="product__form-item">
+      <div class="product__label">Ваш перечень файлом</div>
+      <input type="file" #file multiple />
+    </div>
+
+    <p *ngIf="customDescriptionFileUploaded" class="product__form-files">
+      <ng-container *ngFor="let file of customDescriptionFileUploaded">
+        <div class="product__form-file">
+          <i [class]="'fa ' + getIcon(file.type)"></i>
+          <a [href]="'/api/files/' + file.id" target="_blank"
+            >Скачать {{ file.name }}<br />
+            <small
+              >{{ file.size | bytes: 2 }} // Осталось:
+              {{ file.mustDelete | date: "hh:mm:ss" }}</small
+            ></a
+          >
+          <i
+            class="fa fa-times product__form-times"
+            (click)="deleteFile(file.id)"
+          ></i>
+        </div>
+      </ng-container>
+    </p>
+    <app-counter
+      [remove]="removeSpecial"
+      [count]="countSpecial"
+      [order]="orderSpecial"
+      (changeCount)="countSpecial = $event"
+      [isOnCart]="isOnCartSpecial"
+    ></app-counter>
+  </div>
+</section>

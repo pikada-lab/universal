@@ -1,0 +1,85 @@
+<section class="supplies">
+  <div class="supplies__padding">
+    <h2 class="supplies__title">Заказать аптечку</h2>
+    <p class="supplies__descriptor">
+      Если здесь нет аптечки, которая вам нужна,<br />
+      свяжитесь с нами по телефону 8(800)200-96-97
+    </p>
+    <!-- start search-form  -->
+    <app-search-form
+      class="supplies__search-form"
+      (search)="openSearchResult($event)"
+    ></app-search-form>
+    <!-- end search-form -->
+  </div>
+  <ng-container *ngIf="isSearch">
+    <div class="warp supplies__warp" *ngIf="productsResult?.length">
+      <!-- START product-card --> 
+        <app-product-card 
+          [product]="i"
+          *ngFor="let i of productsResult"
+        ></app-product-card> 
+      <!-- END product-card -->
+    </div> 
+    <div class="warp" *ngIf="!productsResult?.length">
+      <div class="empty">Ничего не найдено</div>
+    </div>
+    <div class="supplies__more">
+      <button
+        class="button button_fill supplies__more_button"
+        *ngIf="isSearch"
+        (click)="isSearch = false"
+      >
+        Показать категории
+      </button>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="!isSearch">
+    <ng-container *ngFor="let i of category">
+      <!-- supplies__item -->
+      <div class="supplies__item">
+        <div class="warp supplies__mini__warp">
+          <div class="supplies__icon">
+            <div class="fa fa-briefcase-medical"></div>
+          </div>
+          <div class="supplies__text">
+            {{ i.name }}
+            <div class="supplies__button-box-mobile">
+              <br />
+              <button
+                class="button button_fill supplies__button"
+                (click)="toggle(i)"
+              >
+                Развернуть
+              </button>
+            </div>
+          </div>
+          <div class="supplies__button-box">
+            <button
+              class="button button_fill supplies__button"
+              (click)="toggle(i)"
+            >
+              Развернуть
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- end supplies__item -->
+      <div class="supplies__item-content" *ngIf="current == i">
+        <div class="warp supplies__warp">
+          <!-- START product-card -->
+          <app-product-card
+            [product]="product"
+            *ngFor="let product of this.products.get(i.categoryID)"
+          ></app-product-card>
+          <!-- END product-card -->
+        </div>
+        <div class="supplies__more">
+          <button class="button button_fill supplies__more_button">
+            Скачать приказ
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+</section>

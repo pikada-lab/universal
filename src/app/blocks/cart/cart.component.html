@@ -1,0 +1,12 @@
+<div class="cart__container" *ngIf="countItem() > 0 && isShow" >
+  <div class="cart__icon">
+    <i class="fas fa-shopping-cart"></i>
+  </div>
+  <div class="cart__text">
+    <div class="cart__title">Перейти в корзину</div>
+    <div class="cart__count" >~ {{ calc() | numberFor3:2 }} ₽</div>
+  </div>
+  <a class="cart__button" routerLink="/cart">
+    <div class="fa fa-chevron-right"></div>
+  </a>
+</div>

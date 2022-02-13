@@ -1,0 +1,75 @@
+<!-- start header -->
+<header class="header">
+  <div class="warp header__warp">
+    <a class="header__back header__mobile_button" routerLink="/">
+      <i class="fas fa-chevron-left"></i>
+    </a>
+
+    <div class="logo header__logo" routerLink="/home" ></div>
+    <div class="between"></div>
+    <nav class="menu header__menu">
+      <a class="menu-item" routerLinkActive="menu-item_active" routerLink="/home"
+        >Главная</a
+      >
+      <a
+        class="menu-item"
+        routerLinkActive="menu-item_active"
+        routerLink="/products"
+        >Заказать аптечки</a
+      >
+      <a
+        class="menu-item"
+        routerLinkActive="menu-item_active"
+        routerLink="/clients"
+        >Наши клиенты</a
+      >
+      <a
+        class="menu-item"
+        routerLinkActive="menu-item_active"
+        routerLink="/contacts"
+        >Контакты</a
+      >
+    </nav>
+
+    <a class="header__call header__mobile_button" href="tel://+79055230881">
+      <i class="fas fa-phone"></i>
+    </a>
+  </div>
+  <div class="header__mobile-menu">
+    <div class="warp heade__mobule-warp">
+      <div
+        class="header__mobile-item"
+        routerLinkActive="header__mobile-item__active"
+        routerLink="/products"
+      >
+        <div class="header__mobile-icon">
+          <i class="fas fa-medkit"></i>
+        </div>
+        <div class="header__mobile-title">Аптечки</div>
+      </div>
+
+      <div
+        class="header__mobile-item"
+        routerLinkActive="header__mobile-item__active"
+        routerLink="/clients"
+      >
+        <div class="header__mobile-icon">
+          <i class="fas fa-user-tie"></i>
+        </div>
+        <div class="header__mobile-title">Клиенты</div>
+      </div>
+
+      <div
+        class="header__mobile-item"
+        routerLinkActive="header__mobile-item__active"
+        routerLink="/contacts"
+      >
+        <div class="header__mobile-icon">
+          <i class="fas fa-map-marked-alt"></i>
+        </div>
+        <div class="header__mobile-title">Контакты</div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- end header -->

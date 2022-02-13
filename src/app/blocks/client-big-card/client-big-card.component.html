@@ -1,0 +1,22 @@
+<div class="clients__item">
+  <div class="client-big-card">
+    <div class="client-big-card__decor"></div>
+    <div class="client-big-card__content">
+      <div class="client-big-card__image">
+        <img
+          (load)="resize($event)"
+          (error)="resize($event)"
+          [src]="'/assets/logo_company/'+ company.img"
+                />
+      </div>
+      <div class="client-big-card__text">
+        <h3 class="client-big-card__title">
+          {{company.name}}
+        </h3>
+        <div class="client-big-card__description"> 
+          {{company.about}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

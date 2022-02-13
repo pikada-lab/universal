@@ -1,0 +1,53 @@
+.client-big-card {
+  width: 396px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0px 13px 33px #00000029;
+  border-left: 2px solid #e5e9e9;
+  border-right: 2px solid #0ad4d0;
+  user-select: none;
+  display: flex;
+  gap: 30px;
+  margin-bottom: 0px;
+}
+
+.client-big-card__decor {
+  background: #dd2958;
+  margin: 40px 0;
+  width: 8px;
+  flex: 0 0 8px;
+  border-radius: 0px 10px 10px 0px;
+}
+
+.client-big-card__text {
+  flex: 1;
+}
+
+.client-big-card__title {
+  font: normal normal bold 16px/22px "Montserrat";
+  color: #dd2958;
+  margin: 10px 0 12px 0;
+}
+
+.client-big-card__description {
+  font: normal normal normal 12px/22px "Montserrat";
+  color: #242424;
+}
+
+.client-big-card__image {
+  padding: 10px;
+  box-sizing: border-box;
+  width: 100%;
+}
+.client-big-card__image img {
+  width: 100%;
+}
+.client-big-card__content {
+  margin-right: 20px;
+  margin-bottom: 40px;
+}
+@media (max-width: 880px) {
+  .client-big-card {
+    width: 100%;
+  }
+}

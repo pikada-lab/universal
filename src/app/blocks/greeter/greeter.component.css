@@ -1,0 +1,262 @@
+.greeter__back {
+  width: 100%;
+  height: 655px;
+  user-select: none;
+}
+
+.greeter__warp {
+  display: flex;
+  height: 100%;
+}
+
+.greeter__text-block {
+  padding-top: 171px;
+  flex: 0 0 553px;
+}
+
+.logo-text {
+  background: url("/assets/Logo.apt3@2x.png") 0 0 no-repeat padding-box;
+  background-size: cover;
+  width: 553px;
+  height: 124px;
+}
+
+.greeter__image-block {
+  margin-top: 180px;
+  flex: 1;
+  /* overflow: hidden; */
+  display: flex;
+}
+
+.greeter__circle {
+  margin-left: 00px;
+}
+
+.greeter__p {
+  font: normal normal normal 16px/30px "Montserrat";
+}
+
+.greeter__list-button {
+  margin-top: 50px;
+}
+.circle { 
+  flex: 1;
+  height: 465px;
+  position: relative;
+}
+.circle canvas { 
+  width: 100%;
+  position: relative;
+  z-index: 2;
+  mix-blend-mode: darken;
+}
+.circle__back {
+  position: absolute;
+  top: -261px;
+  left: 30px;
+  z-index: 1;
+}
+
+@media (max-width: 1380px) {
+  .greeter__back {
+    height: 740px;
+  }
+  .circle canvas {
+    width: 100%;
+    height: calc(589px * 465 / 1000);
+  }
+  .circle__back {
+    width: 90%;  
+      top: -277px;
+  }
+  .greeter__circle {
+    margin-left: 0px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .circle {
+    width: 100%;
+    height: 430px;
+  }
+  .circle img {
+    height: 100%;
+  }
+
+  .greeter__text-block {
+    padding-top: 180px;
+    flex: 0 0 443px;
+  }
+  .logo-text {
+    width: 439px;
+    height: 95px;
+  }
+}
+
+@media (max-width: 1064px) {
+  .greeter__back {
+    height: 580px;
+  }
+  .greeter__warp {
+    display: flex;
+    width: calc(100% - 64px);
+    margin: 0 32px;
+  }
+
+  .greeter__image-block {
+    margin-top: 56px;
+  }
+  .greeter__circle {
+    margin-top: 130px;
+    margin-left: 0px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  .circle {
+    width: 100%;
+    height: calc((100vw - 64px - 400px) * 465 / 1000);
+  }
+  .circle canvas {
+    width: 100%;
+    height: calc((100vw - 64px - 400px) * 465 / 1000);
+  }
+
+  .greeter__text-block {
+    padding-top: 130px;
+    flex: 0 0 400px;
+  }
+  .logo-text {
+    width: 339px;
+    height: 77px;
+  }
+  .greeter__p {
+    font: normal normal normal 14px/20px "Montserrat";
+  }
+}
+
+@media (max-width: 840px) {
+  .greeter__back {
+    height: auto;
+    padding-bottom: 40px;
+  }
+  .greeter__warp {
+    height: auto;
+    flex-direction: column-reverse;
+  }
+  .circle__back {
+    width: 90%;  
+     left: 5%;
+  }
+  .circle {
+    height: calc((100% ) * 465 / 1000);
+  }
+  .circle canvas {
+    width: 100%;
+    height: calc((100% ) * 465 / 1000);
+  }
+  .greeter__circle {
+    margin-top: 50px;
+    margin-bottom: 20px;
+  }
+
+  .greeter__text-block {
+    padding: 0;
+    flex: 1;
+  }
+  .greeter__image-block {
+    padding: 0;
+    flex: 0;
+  }
+  .greeter__subtitle {
+    display: none;
+  }
+  .greeter__logo-text {
+    width: 100%;
+    height: calc(100vw / 5.4);
+  }
+  .greeter__list-button {
+    display: none;
+  }
+}
+
+
+
+.cart-form__container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+
+.cart-form__valid .cart-form__label {
+  color: #050;
+}
+.cart-form__valid  input {
+  color: #050;
+}
+
+.cart-form__form-item {
+  border-radius: 10px;
+  border: 1px solid #f0f0f0;
+  margin-bottom: 25px;
+  position: relative;
+  padding: 5px 8px;
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.cart-form__label {
+  color: #888;
+  background: #fff;
+  padding: 0 10px;
+  font-size: 11px;
+  font-family: "Montserrat";
+  position: absolute;
+  z-index: 2;
+  left: 23px;
+  top: -6px;
+}
+.cart-form__form-item textarea {
+  width: 100%;
+  box-sizing: border-box;
+  height: 50px;
+  padding: 20px;
+  border: none;
+  resize: vertical;
+  font-size: 16px;
+}
+.cart-form__form-item textarea:focus {
+  outline: none;
+  background: #f6f6f6;
+}
+.cart-form__form-item input {
+  padding: 10px;
+  box-sizing: border-box;
+  border: none;
+}
+
+.cart-form__form-item input[type="text"] {
+  width: 100%;
+}
+.cart-form__form-item input[type="radio"] {
+  height: 30px;
+}
+.cart-form__form-item label {
+  font-size: 14px;
+  color: #333;
+  font-family: "Montserrat";
+  display: block;
+}
+
+.cart-form__action {
+  display: flex;
+  gap: 50px;
+  align-items: center;
+}
+
+.cart-form__total {
+  font: normal normal normal 41px/22px "Montserrat";
+  color: #dd2958;
+}

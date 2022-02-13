@@ -1,0 +1,14 @@
+<!-- client-card --> 
+  <div class="client-card__decor"></div>
+  <div class="client-card__image" >
+    <img style="width: 100%;"
+    [src]="'/assets/logo_company/'+ company.img"
+    />
+  </div>
+  <div class="client-card__text"  >
+    <h3 class="client-card__title">{{ company.name }}</h3>
+    <div class="client-card__description">
+      {{ company.about }}
+    </div>
+  </div> 
+<!-- End client-card -->

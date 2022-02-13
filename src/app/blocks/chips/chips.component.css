@@ -1,0 +1,44 @@
+
+/* chips */
+
+.chips {
+  display: flex;
+  height: 25px;
+  gap: 15px;
+}
+
+.chips__item {
+  border-radius: 8px;
+  background: #c0c0c0;
+  padding: 5px 15px;
+  text-align: center;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: bold;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chips__item__new {
+  color: #fff;
+  background: transparent linear-gradient(106deg, #349aff 0%, #006fff 50%, #1d489d 100%) 0% 0% no-repeat padding-box;
+}
+.chips__item__best { 
+  color: #fff;
+  background: transparent linear-gradient(106deg, #ff3434 0%, #ff0000 50%, #9d1d1d 100%) 0% 0% no-repeat padding-box;
+} 
+
+@media (max-width: 824px) {
+  .chips {
+    display: flex;
+    height: 20px;
+    gap: 5px;
+  }
+  .chips__item {
+    padding: 2px 5px;
+    font-size: 8px;
+    border-radius: 7px;
+  }
+  
+}

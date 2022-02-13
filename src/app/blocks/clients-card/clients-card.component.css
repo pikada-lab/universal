@@ -1,0 +1,45 @@
+:host {
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px 24px 12px 0;
+  display: flex;
+  box-shadow: 0px 6px 23px #00000029;
+  gap: 30px;
+  text-decoration: none; 
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  user-select: none;
+}
+ 
+
+.client-card__decor {
+  background: #dd2958;
+  height: calc(100% - 30px);
+  margin: 15px 0;
+  width: 8px;
+  flex: 0 0 8px;
+  border-radius: 0px 10px 10px 0px;
+}
+
+.client-card__image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 126px;
+}
+
+.client-card__text {
+  flex: 1;
+  overflow: hidden;
+}
+
+.client-card__title {
+  font: normal normal bold 16px/22px "Montserrat";
+  color: #dd2958;
+  margin: 10px 0 12px 0;
+}
+
+.client-card__description {
+  font: normal normal normal 12px/22px "Montserrat";
+  color: #242424;
+}

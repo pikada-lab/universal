@@ -1,0 +1,27 @@
+<div class="modal--back" (click)="closePikadaModal()" *ngIf="isOpen"></div>
+<div class="modal" *ngIf="isOpen">
+  <div class="modal--head">
+    <div class="modal--title">{{ title }}</div>
+    <div class="modal--times" (click)="closePikadaModal()">
+      <div class="fa fa-times"></div>
+    </div>
+  </div>
+  <div class="modal--body">
+    <!-- start контент  -->
+    <div class="term-content">
+      <ng-content></ng-content>
+    </div>
+    <!-- end контент  -->
+  </div>
+  <div class="modal--footer" *ngIf="buttons">
+    <div class="checkbox"></div>
+    <div class="next">
+      <button  *ngFor="let bt of buttons"
+        class="button button_fill"
+        id="agree-button"
+        (click)="bt.event()"
+      >  {{ bt.title }}
+      </button>
+    </div>
+  </div>
+</div>

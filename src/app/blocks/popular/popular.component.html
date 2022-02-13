@@ -1,0 +1,50 @@
+<section class="popular" *ngIf="products">
+  <h2 class="popular__title">Популярные аптечки</h2>
+  <p class="popular__descriptor">
+    Если здесь нет аптечки, которая вам нужна, свяжитесь с нами <br />по
+    телефону 8(800)200-96-97
+  </p>
+  <!-- start search-form  -->
+  <app-search-form
+    class="popular__search-form"
+    (search)="openSearchResult($event)"
+  ></app-search-form>
+
+  <div class="warp popular__warp" *ngIf="isSearch">
+    <!-- START product-card -->
+    <ng-container *ngIf="productsResult?.length">
+      <app-product-card
+        [product]="i"
+        *ngFor="let i of productsResult"
+      ></app-product-card>
+    </ng-container>
+    <!-- END product-card -->
+  </div>
+  <ng-container *ngIf="!productsResult?.length">
+    <div class="warp" *ngIf="isSearch">
+      <div class="empty">Ничего не найдено</div>
+    </div>
+  </ng-container>
+  <!-- end search-form -->
+  <div class="warp popular__warp" *ngIf="!isSearch">
+    <!-- START product-card -->
+    <app-product-card [product]="i" *ngFor="let i of products"></app-product-card>
+    <!-- END product-card -->
+  </div>
+  <div class="popular__more">
+    <button
+      class="button button_fill popular__more_button"
+      *ngIf="isSearch"
+      (click)="isSearch = false"
+    >
+      Показать популярное
+    </button>
+    <a
+      class="button button_fill popular__more_button"
+      *ngIf="!isSearch"
+      routerLink="/products"
+    >
+      Смотреть полный перечень товаров
+    </a>
+  </div>
+</section>

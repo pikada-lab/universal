@@ -1,0 +1,16 @@
+<div class="clients">
+  <div class="warp clients__warp">
+    <div class="clients__await" id="load-place">
+      <div class="logo clients__logo"></div>
+    </div>
+    <div class="clients__container loading" id="load-waiter">
+      <ng-container *ngIf="company">
+        <app-client-big-card
+          (complite)="resize($event)"
+          [company]="i"
+          *ngFor="let i of company"
+        ></app-client-big-card>
+      </ng-container>
+    </div>
+  </div>
+</div>

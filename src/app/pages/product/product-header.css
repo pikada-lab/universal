@@ -1,0 +1,132 @@
+.product-header {
+  padding: 129px 20px 20px 20px;
+}
+.product-header .product-header__warp {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 20px;
+}
+.product-header__naming {
+  flex: 0 0 708px;
+}
+.product-header__min-container {
+  min-height: 260px;
+}
+.product-header__title {
+  color: #dd2958;
+  font: normal normal bold 32px/40px "Montserrat";
+}
+
+.product-header__description {
+  font: normal normal normal 14px/27px "Montserrat";
+  color: #000;
+  padding-bottom: 20px;
+}
+
+.product-header__image {
+  flex: 1;
+  position: relative;
+}
+
+.product-header__image img {
+  position: absolute;
+  top: -40px;
+  left: calc((100% - 617px) / 2);
+  width: 617px;
+}
+
+.product-header__hh {
+  font-size: 12px;
+  padding-bottom: 40px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 708px;
+}
+.product-header__hh * {
+  display: block;
+  height: 20px;
+}
+.product-header__hh a {
+  text-decoration: none;
+  color: #222;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.product-header__hh a:hover {
+  color: #dd2958;
+}
+.product-header__hh i {
+  margin-top: 2px;
+  font-size: 14px;
+}
+.product-header__chips {
+  margin-bottom: 14px;
+  display: block;
+}
+@media (max-width: 1380px) {
+  .product-header__naming {
+    flex: 0 0 508px;
+  }
+  .product-header__hh {
+    width: 508px;
+  }
+  .product-header__image img {
+    top: -40px;
+    left: calc((100% - 508px) / 2);
+    width: 508px;
+  }
+}
+
+@media (max-width: 1065px) {
+  .product-header__naming {
+    flex: 1;
+  }
+  .product-header__hh {
+    display: none;
+  }
+  .product-header__image {
+    flex: 1;
+  }
+  .product-header__image img {
+    top: -40px;
+    left: auto;
+    right: 10px;
+    width: 100%;
+  }
+}
+
+@media (max-width: 824px) {
+  .product-header__min-container  {
+    min-height: auto;
+  }
+  .product-header {
+    padding: 50px 0px 0 0px;
+  }
+  .product-header .product-header__warp {
+    display: block;
+  }
+  .product-header__naming {
+    padding: 0 20px 10px;
+    background: #f3f3f3;
+    padding-top: 150px;
+  }
+  .product-header__image {
+    margin-bottom: -180px;
+  }
+  .product-header__image img {
+    position: static;
+  }
+  .product-header__title {
+    color: #dd2958;
+    font: normal normal bold 22px/30px "Montserrat";
+  }
+
+  .product-header__description {
+    font: normal normal normal 13px/22px "Montserrat";
+    color: #000;
+    padding-bottom: 0px;
+  }
+}

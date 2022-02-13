@@ -1,0 +1,15 @@
+<div class="counter">
+  <button class="button button_fill counter__button" (click)="minus()">
+    <div class="fa fa-minus" ></div>
+  </button>
+  <input [ngClass]="{'counter__number': true, 'counter__error': error }"  [(ngModel)]="count" (change)="validate()" />
+  <button class="button button_fill counter__button" (click)="plus()">
+    <div class="fa fa-plus  "  ></div>
+  </button>
+  <button *ngIf="order" class="button button_fill counter__order_button" (click)="order.emit(count)">
+    {{ isOnCart ? 'Сохранить' : 'Заказать'  }}
+  </button>
+  <button *ngIf="remove && isOnCart" class="button button_strock counter__button" (click)="remove.emit()">
+    <div class="fa fa-times"  ></div>
+  </button>
+</div> 

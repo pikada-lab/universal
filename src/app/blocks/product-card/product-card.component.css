@@ -1,0 +1,116 @@
+
+.product-card {
+  text-decoration: none;
+  display: flex;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.1s ease-in-out;
+}
+.product-card:hover {
+  transform: translateY(-10px);
+}
+.product-card__image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+.product-card__image img {
+  width: 100%;
+}
+.product-card__stereo-box {
+  box-sizing: border-box;
+  width: 100%;
+  height: calc(100% - 180px);
+  margin-top: 180px;
+  padding: 180px 28px 80px 28px;
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0px 13px 33px #00000029;
+  border-left: 3px solid #dd2958;
+  border-right: 3px solid #0ad4d0;
+  position: relative;
+}
+
+.product-card__title {
+  font: normal normal bold 16px/27px "Montserrat";
+  color: #DD2958;
+}
+
+.product-card-description {
+  font: normal normal normal 12px/22px "Montserrat";
+  margin-top: 16px;
+}
+.product-card__price-line {
+  position: absolute;
+  bottom: 40px;
+  left: 28px;
+  right: 28px;
+  display: flex; 
+}
+.product-card__price {
+  font: normal normal medium 16px/22px "Montserrat";
+  color: #dd2958;
+  flex: 1;
+}
+
+.product-card__logo {
+  flex: 0 0 112px;
+  width: 112px;
+  height: 23px; 
+  background: url("/assets/logo.apt2.png") no-repeat;
+  background-size: cover;
+}
+
+@media (max-width: 1380px) {
+
+  .product-card__stereo-box {
+
+    height: calc(100% - 165px);
+    margin-top: 165px;
+    padding: 165px 28px 80px 28px;
+  }
+}
+
+@media (max-width: 1064px) {
+  
+}
+
+@media (max-width: 840px) {
+  .product-card__stereo-box { 
+    height: calc(100% -  65px);
+    margin-top: 65px;
+    padding:  65px 14px 40px 14px;
+    box-shadow: 0px 4px 8px #00000029;
+  }
+  .product-card__stereo-box .chips {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+  }
+  .product-card__stereo-box .chips__item {
+    font-size: 8px;
+    line-height: 1;
+    padding: 4px;
+    border-radius: 4px;
+  } 
+
+  .product-card__title {
+    font: normal normal bold 9px/12px Montserrat;
+  }
+  .product-card-description {
+    display: none;;
+  }
+  .product-card__logo {
+    display: none;
+  }
+  .product-card__price-line {
+    position: absolute;
+    bottom: 20px;
+    left: 14px;
+    right: 14px;
+    display: flex; 
+  }
+}
