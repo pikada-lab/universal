@@ -2,12 +2,19 @@ import 'zone.js/node';
 
 import { ngExpressEngine } from '@nguniversal/express-engine';
 import { ICQHttpClient } from './HttpClient';
-import * as express from 'express';
+import express from 'express';
 import { extname, join } from 'path';
 var path = require('path');
 import { AppServerModule } from './src/main.server';
 import { APP_BASE_HREF } from '@angular/common';
-import { createReadStream, existsSync, mkdirSync, statSync } from 'fs';
+import {
+  createReadStream,
+  createWriteStream,
+  existsSync,
+  mkdirSync,
+  readFile,
+  statSync,
+} from 'fs';
 import { ProductAdapter } from 'adapters/ProductAdapter';
 import { FileRepository } from 'adapters/FileRepository';
 import { Order } from './adapters/Order';
@@ -103,6 +110,19 @@ export function app() {
     return aptechkiCategory;
   }
 
+  async function getCategoryAidByID(id: number) {
+    const categoriy = await http.get<any>(
+      'http://127.0.0.1:9001/v1/category/' + id,
+      {},
+      { 'user-agent': 'aptechki.ru' }
+    );
+    if (categoriy.status != 0) {
+      console.log(categoriy.status);
+      throw new Error('Временно не работает');
+    }
+    return categoriy.response;
+  }
+
   async function getAllProducts() {
     const category = await getCategoryAid();
     let product = [];
@@ -112,22 +132,26 @@ export function app() {
     }
     return product;
   }
-  server.get('/api/company/', async (req, res) => {
+  server.get('/api/company/', async (req: any, res: any) => {
     let product = await getAllProducts();
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify(company));
   });
-  server.get('/api/product/popular', async (req, res) => {
+  server.get('/api/product/popular', async (req: any, res: any) => {
     let product = await getAllProducts();
     res.setHeader('Content-Type', 'application/json');
     res.send(
       JSON.stringify(
-        product.filter((r) => r.rare).map((r) => ProductAdapter(r))
+        product
+          .filter((r) => r.rare)
+          .filter((r: any) => !r.exclude)
+          .sort((r: any, l: any) => r.regularPrice - l.regularPrice)
+          .map((r) => ProductAdapter(r))
       )
     );
   });
 
-  server.get('/api/product/search', async (req, res) => {
+  server.get('/api/product/search', async (req: any, res: any) => {
     let query = req.query['q'];
     console.log(query);
     let reg = new RegExp('(' + query + ')', 'i');
@@ -136,19 +160,32 @@ export function app() {
     res.send(
       JSON.stringify(
         product
+          .filter((r: any) => !r.exclude)
+          .sort((r: any, l: any) => r.regularPrice - l.regularPrice)
           .map((r) => ProductAdapter(r))
           .filter((r) => reg.test(r.title) || reg.test(r.subtitle))
       )
     );
   });
 
-  server.get('/api/category/', async (reqst, res) => {
-    const aptechkiCategory = await getCategoryAid();
-    res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(aptechkiCategory));
+  server.get('/api/category/', async (reqst: any, res: any) => {
+    try {
+      if (!reqst?.query?.id) {
+        const aptechkiCategory = await getCategoryAid();
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(aptechkiCategory));
+      } else {
+        const id = reqst.query.id;
+        let result = await getCategoryAidByID(id);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(result));
+      }
+    } catch (ex: any) {
+      res.status(400).send(ex.message);
+    }
   });
 
-  server.get('/api/category/:id', async (req, res) => {
+  server.get('/api/category/:id', async (req: any, res: any) => {
     const id = req.params.id;
     let result = await http.get<any>(
       'http://127.0.0.1:9001/v1/product/category/' + id,
@@ -160,7 +197,7 @@ export function app() {
     res.send(JSON.stringify(result.map((r: any) => ProductAdapter(r))));
   });
 
-  server.get('/api/product/:id', async (req, res) => {
+  server.get('/api/product/:id', async (req: any, res: any) => {
     const id = req.params.id;
     let result = await http.get<any>(
       'http://127.0.0.1:9001/v1/product/' + id,
@@ -201,7 +238,7 @@ export function app() {
 
   //#region FILE SECTION
 
-  server.post('/api/files', async (req: any, res) => {
+  server.post('/api/files', async (req: any, res: any) => {
     if (!req.files || Object.keys(req.files).length === 0) {
       res.status(400).send('No files were uploaded.');
       return;
@@ -228,13 +265,13 @@ export function app() {
     }
   });
 
-  server.delete('/api/files/:id', async (req: any, res) => {
+  server.delete('/api/files/:id', async (req: any, res: any) => {
     const id = req.params.id;
     fileRepository.delete(id);
     res.send(JSON.stringify({ response: 'Ok' }));
   });
 
-  server.get('/api/files/:id', async (req: any, res) => {
+  server.get('/api/files/:id', async (req: any, res: any) => {
     try {
       const id = req.params.id;
       let fileStruct = fileRepository.get(id);
@@ -252,25 +289,23 @@ export function app() {
       res.status(400).send('Some problem.');
     }
   });
-  server.get('/api/pdf/:id', async (req: any, res) => {
+  server.get('/api/pdf/:id', async (req: any, res: any) => {
     try {
       const id = req.params.id;
 
-      let productRef = await http.get<any>(
-        'http://127.0.0.1:9001/v1/product/' + id,
+      let pdf = await http.getFile(
+        'http://127.0.0.1:9031/api/pdf/' + id,
         {},
         { 'user-agent': 'aptechki.ru' }
       );
-      let product = ProductAdapter(productRef[0]);
-      let str = `# ${product.title}\n**${product.subtitle}**\n${product.text}`;
-
-      res.setHeader('Content-Length', Buffer.byteLength(str, 'utf8'));
-      res.setHeader('Content-Type', 'application/markdown');
+      // Pапрос
+      res.setHeader('Content-Length', Buffer.byteLength(pdf, 'latin1'));
+      res.setHeader('Content-Type', 'application/pdf');
       res.setHeader(
         'Content-Disposition',
-        'attachment; filename=' + product.id + '.md'
+        'attachment; filename=' + id + '.pdf'
       );
-      res.send(str);
+      res.send(pdf);
     } catch (ex) {
       console.log(ex);
       res.status(400).send('Some problem.');
@@ -279,7 +314,7 @@ export function app() {
 
   //#endregion
 
-  server.post('/api/order/', async (req: any, res) => {
+  server.post('/api/order/', async (req: any, res: any) => {
     try {
       let order = new Order(req.body, uploadPath);
       let id = await order.send();
@@ -289,7 +324,7 @@ export function app() {
     }
   });
 
-  server.post('/api/order/request', async (req: any, res) => {
+  server.post('/api/order/request', async (req: any, res: any) => {
     try {
       let order = new Order(req.body, uploadPath);
       let id = await order.sendRequest();
@@ -298,7 +333,7 @@ export function app() {
       res.status(400).send(ex.message);
     }
   });
-  server.post('/api/order/call', async (req: any, res) => {
+  server.post('/api/order/call', async (req: any, res: any) => {
     try {
       let order = new Order(req.body, uploadPath);
       let id = await order.sendCall();
@@ -316,7 +351,7 @@ export function app() {
   );
 
   // All regular routes use the Universal engine
-  server.get('*', (req, res) => {
+  server.get('*', (req: any, res: any) => {
     res.render(indexHtml, {
       req,
       providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }],

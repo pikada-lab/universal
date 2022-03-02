@@ -1,0 +1,74 @@
+
+h1 {
+  margin: 0;
+  font: normal normal bold 16pt/20pt "Montserrat";
+  color: #dd2958;
+}
+
+h2 {
+  font: normal normal bold 12pt/20pt "Montserrat";
+  color: #dd2958;
+}
+
+h3 {
+  font: normal normal bold 11pt/16pt "Montserrat";
+  color: #353535;
+}
+
+p { 
+  color: #121212;
+  font: normal normal normal 7pt/11pt "Montserrat";
+}
+
+body {
+  color: #000;
+  font: normal normal normal 7pt/11pt "Montserrat";
+}
+
+
+/** Table */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td,
+th {
+  padding: 3pt 5pt;
+  font: normal normal normal 6pt/9pt "Ubuntu";
+  color: #242424;
+}
+
+th {
+  border-bottom: 1px solid #242424;
+  border-left: 1px solid #242424;
+  font-weight: bold;
+  text-align: left;
+}
+
+tr th:first-child {
+  border-left: none;
+  text-align: center;
+}
+
+tr td:first-child {
+  text-align: center;
+}
+
+tr td:last-child {
+  text-align: right;
+}
+
+tr {
+  border-bottom: 1px solid #d3d3d3;
+  background: #ffffff;
+}
+
+tr:nth-child(2n) {
+  background: #faffff
+}
+
+tr:nth-child(1) {
+  background: #ffffff;
+}

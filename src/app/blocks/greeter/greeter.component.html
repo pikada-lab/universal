@@ -199,18 +199,22 @@
 <app-modal [open]="open" [title]="'Заказать звонок'" [buttons]="callButtons">
   <h2>Заказать звонок</h2>
   <div class="cart-form__container">
-    <div class="cart-form__form-item">
+    <div 
+    [class]="
+      'cart-form__form-item ' + (isValidName ? 'cart-form__valid' : 'cart-form__invalid')
+    ">
       <div class="cart-form__label">ФИО</div>
       <input
         type="text"
         maxlength="32"
         [(ngModel)]="cart.name"
+        (keyup)="validName()"
         (change)="save()"
       />
     </div>
     <div
       [class]="
-        'cart-form__form-item ' + (isValidPhone ? 'cart-form__valid' : '')
+        'cart-form__form-item ' + (isValidPhone ? 'cart-form__valid' : 'cart-form__invalid')
       "
     >
       <div class="cart-form__label">Телефон</div>
@@ -233,18 +237,22 @@
 >
   <h2>Отправить запрос</h2>
   <div class="cart-form__container">
-    <div class="cart-form__form-item">
+    <div 
+    [class]="
+      'cart-form__form-item ' + (isValidName ? 'cart-form__valid' : 'cart-form__invalid')
+    ">
       <div class="cart-form__label">ФИО</div>
       <input
         type="text"
         maxlength="32"
         [(ngModel)]="cart.name"
+        (keyup)="validName()"
         (change)="save()"
       />
     </div>
     <div
       [class]="
-        'cart-form__form-item ' + (isValidPhone ? 'cart-form__valid' : '')
+        'cart-form__form-item ' + (isValidPhone ? 'cart-form__valid' : 'cart-form__invalid') 
       "
     >
       <div class="cart-form__label">Телефон</div>
@@ -259,7 +267,7 @@
 
     <div
       [class]="
-        'cart-form__form-item ' + (isValidMail ? 'cart-form__valid' : '')
+        'cart-form__form-item ' + (isValidMail ? 'cart-form__valid' : 'cart-form__invalid')
       "
     >
       <div class="cart-form__label">Почта</div>

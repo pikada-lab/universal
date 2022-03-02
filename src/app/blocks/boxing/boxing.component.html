@@ -1,8 +1,14 @@
 <div class="boxing" *ngIf="cases">
   <form name="box-form">
-    <div class="boxing__grid"> 
-      <ng-container *ngFor="let case of cases"> 
-        <app-aid-box [case]="case" [caseId]="caseId" (saveCase)="changeCaseId.emit($event)"></app-aid-box>
+    <div class="boxing__grid">
+      <ng-container *ngFor="let case of cases">
+        <ng-container *ngIf="product.hasCase(case.id)">
+          <app-aid-box
+            [case]="case"
+            [caseId]="caseId"
+            (saveCase)="changeCaseId.emit($event)"
+          ></app-aid-box>
+        </ng-container>
       </ng-container>
     </div>
   </form>

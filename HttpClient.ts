@@ -4,11 +4,60 @@ import { FormDataICQ } from './FormDataICQ';
 var https = require('http')
 
 export interface HttpClient {
+    getFile(url: string, params: any, header: { "user-agent": string }): Promise<Buffer>;
     get<T>(url: string, params: any, header: { "user-agent": string }): Promise<T>;
     post<T>(url: string, data: FormDataICQ, header: { "user-agent": string }): Promise<T>;
 }
 
 export class ICQHttpClient implements HttpClient {
+
+    getFile(url: string, params: any, header: { "user-agent": string }): Promise<Buffer> {
+        return new Promise((resolve, reject) => {
+            let requestString = "?";
+            for (let i in params) {
+                if (Array.isArray(params[i])) {
+                    for (let j of params[i]) {
+                        requestString += `${encodeURIComponent(i)}=${encodeURIComponent(j)}&`
+                    }
+                } else {
+                    requestString += `${encodeURIComponent(i)}=${encodeURIComponent(params[i])}&`
+                }
+            }
+            requestString = requestString.slice(0, -1);
+            console.log(requestString);
+            let urlData = new URL(url);
+            var req = https.request(
+                {
+                    host: urlData.hostname,
+                    port: urlData.port,
+                    path: `${urlData.pathname}${requestString}`,
+                    method: "GET",
+                    headers: {
+                        // "Content-Type": "application/json",
+                        "user-agent": header["user-agent"]
+                    }
+                },
+                function (res: any) {
+
+                    res.setEncoding('latin1');
+                    let rawData = '';
+                    res.on('data', (chunk: any) => { rawData += chunk; });
+                    res.on('end', (d: Buffer) => {
+                        try {
+                            resolve(Buffer.from(rawData, "latin1"));
+                        } catch (ex: any) {
+                            console.log(ex.message);
+                        }
+                    })
+                }
+            )
+            req.on("error", (d: any) => {
+                reject(d);
+            });
+            req.end();
+        })
+    }
+
     get<T>(url: string, params: any, header: { "user-agent": string }): Promise<T> {
         return new Promise((resolve, reject) => {
             let requestString = "?";

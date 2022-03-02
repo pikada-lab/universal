@@ -57,11 +57,8 @@
                 (change)="save()"
               />
             </div>
-          </div>
-          <div class="cart-form__form-item">
-            <div class="cart-form__label">Адрес</div>
-            <input type="text" [(ngModel)]="cart.address" (change)="save()" />
-          </div>
+          </div> 
+
           <div class="cart-form__form-item">
             <div class="cart-form__label">Способ оплаты</div>
             <input
@@ -83,6 +80,7 @@
             />
             <label for="payment-2">Наличный расчёт</label>
           </div>
+
           <div class="cart-form__form-item">
             <div class="cart-form__label">Способ получения</div>
             <input
@@ -114,6 +112,11 @@
             <label for="delivary-3">Доставка курьером за МКАД</label>
           </div>
 
+          <div class="cart-form__form-item" *ngIf="cart.delivery != '1'">
+            <div class="cart-form__label">Адрес</div>
+            <input type="text" [(ngModel)]="cart.address" (change)="save()" />
+          </div>
+
           <p class="cart-form__text-constraint">
             {{ cart.comment?.length ?? 0 | numberFor3 }} из
             {{ maxCustomDescription | numberFor3 }} символов
@@ -126,6 +129,8 @@
               [maxlength]="maxCustomDescription"
               [(ngModel)]="cart.comment"
               (change)="save()"
+              (keyup)="autoGrowTextZone($event)"
+              (focus)="autoGrowTextZone($event)"
             ></textarea>
           </div>
 
@@ -157,7 +162,7 @@
         </p>
 
         <div class="cart-form__action">
-          <button class="button button_fill" (click)="order()">
+          <button class="button button_fill" (click)="order()" [disabled]="isProcess">
             Оформить заказ
           </button>
           <div class="cart-form__total">{{ calc() | numberFor3: 2 }} ₽</div>

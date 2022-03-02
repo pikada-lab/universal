@@ -5,6 +5,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { debounceTime } from 'rxjs';
 import { CartService } from 'src/app/business/cart.service';
 import { Cart, CartItem } from 'src/app/models';
@@ -25,9 +26,21 @@ export class CartPageComponent implements OnInit {
   customeFile!: ElementRef<HTMLInputElement>;
   maxCustomDescription = 2000;
 
-  constructor(private cartService: CartService, private t: ToastService) {}
+  constructor(
+    private cartService: CartService, 
+    private t: ToastService,
+    private meta: Meta,
+    private titleService: Title
+    ) {}
 
   ngOnInit(): void {
+    this.titleService.setTitle('Корзина');
+    this.meta.updateTag({
+      name: 'description',
+      content: 'Цена доставки в заказ не входит, она будет добавлена позже администратором.',
+    });
+
+
     this.items = this.cartService.getAll();
     this.cart = this.cartService.getMetadata();
     this.validPhone();
@@ -35,6 +48,7 @@ export class CartPageComponent implements OnInit {
     this.savePipe.pipe(debounceTime(1000)).subscribe(() => {
       this.cartService.save();
     });
+    window.document.body.scrollTop = 0; 
   }
 
   calc() {
@@ -100,8 +114,15 @@ export class CartPageComponent implements OnInit {
             this.cart.customDescriptionFile.push(...file);
             this.cartService.save();
           }
+        }).catch((err) => {
+          this.t.toast("Не удалось загрузить файл", "error");
         });
     }
+  }
+
+  autoGrowTextZone(e: any) {
+    e.target.style.height = "0px";
+    e.target.style.height = (e.target.scrollHeight + 25)+"px";
   }
 
   deleteFile(file: string) {
@@ -111,13 +132,16 @@ export class CartPageComponent implements OnInit {
     return this.cartService.getIcon(type);
   }
 
+  isProcess = false;
   openForm = new EventEmitter<boolean>();
   id: number = 0;
   order() {
     if(!this.isValidMail) return this.t.toast("Проверьте правильность заполнения почты","error")
     if(!this.isValidPhone) return this.t.toast("Проверьте правильность заполнения телефона","error")
     if(!this.cart.name) return this.t.toast("Нет ФИО","error")
-    if(this.cart.name.length < 3) return this.t.toast("ФИО должно быть не менее 3х букв","error")
+    if(this.cart.name.length < 3) return this.t.toast("ФИО должно быть не менее 3х букв","error");
+    this.t.toast("Подождите, оформляется заказ");
+    this.isProcess = true;
     this.cartService.order().subscribe({
       next: (r: any) => {
         console.log(r);
@@ -125,8 +149,10 @@ export class CartPageComponent implements OnInit {
         this.cartService.cleanItems();
         this.items = this.cartService.getAll();
         this.openForm.emit(true);
+        this.isProcess = false;
       },
       error: (err) => {
+        this.isProcess = false;
         this.t.toast('Не удалось выполнить запрос.', 'error');
       },
     });

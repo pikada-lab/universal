@@ -38,6 +38,9 @@
   margin: 0;
   font: normal normal bold 12px/17px "Montserrat";
 }
+.aid-box__text  small {
+font-weight: normal;
+}
 .aid-box__chackbox {
   padding-top: 1px;
 }

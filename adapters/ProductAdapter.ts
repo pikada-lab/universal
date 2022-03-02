@@ -1,7 +1,9 @@
 import { Products } from "src/app/models";
+import { AidDetails } from "src/app/models/AidDetails";
 
  
 
+export type ProductTypes = "DEFAULT" | "AID";
   export type ProductStatus =
   | "PENDING"
   | "CREATED"
@@ -30,6 +32,9 @@ export class UniversalProduct {
   public rare: boolean = false;
   public theBest: boolean = false;
   public latest: boolean = false;
+
+  public type: ProductTypes = "DEFAULT";
+  public aidDetails: AidDetails | undefined;
 
   public userID: number | null = null;
 
@@ -75,6 +80,11 @@ export class UniversalProduct {
     this.exclude = json.exclude;
     this.userID = json.userID;
     this.STATUS = json.STATUS;
+    this.type = json.type;
+    if(json.type === "AID") {
+      this.aidDetails = new AidDetails();
+      this.aidDetails.init(json.aidDetails);
+    }
     json.image?.forEach((id: number, i: number) => {
       this.image.add(id, i);
     });
@@ -111,7 +121,7 @@ export class UniversalProduct {
  */
  export class ImageList {
   private images: number[] = [];
-  private thumbnail: { id: number; src: string }[] = [];
+  private thumbnail: { id: number; src: string, original: string }[] = [];
   get count() {
     return this.images.length;
   }
@@ -129,6 +139,7 @@ export class UniversalProduct {
     this.thumbnail.splice(order ?? 0, 0, {
       id: resource,
       src: `http://auxilium-system.ru/storage/enlarged/${resource}.webp`,
+      original: `http://auxilium-system.ru/storage/original/${resource}.webp`,
     });
   }
 
@@ -156,6 +167,7 @@ export class UniversalProduct {
       ...tmp.map((r) => ({
         id: r,
         src: `http://auxilium-system.ru/storage/enlarged/${r}.webp`,
+        original: `http://auxilium-system.ru/storage/original/${r}.webp`,
       }))
     );
   }

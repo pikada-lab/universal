@@ -5,7 +5,10 @@
     </div>
     <div class="product-header__naming">
       <div class="product-header__min-container">
-        <app-chips [product]="product" class="product-header__chips"></app-chips>
+        <app-chips
+          [product]="product"
+          class="product-header__chips"
+        ></app-chips>
         <h1 class="product-header__title">
           {{ product.title }}
         </h1>
@@ -15,11 +18,8 @@
       </div>
       <div class="product-header__hh">
         <i class="fa fa-medkit"></i>
-        <a href="/products"
-          >{{ product.subtitle }}</a
-        >
-        <i class="fa fa-chevron-right"></i>
-        <a href="#3">{{ product.title }}</a>
+        <a routerLink="/products" *ngIf="category">{{ category.name }}</a>
+
       </div>
     </div>
   </div>
@@ -41,10 +41,17 @@
       <div class="product__price" *ngIf="product.price">
         {{ product.price * count | numberFor3: 2 }} ₽
       </div>
-    </div>    
+    </div>
     <!-- start boxing -->
-    <app-boxing *ngIf="cases" [cases]="cases" [caseId]="caseId" (changeCaseId)="changeCaseId($event)"></app-boxing>
-  
+    <ng-container *ngIf="product">
+      <app-boxing
+        *ngIf="cases"
+        [cases]="cases"
+        [caseId]="caseId"
+        [product]="product"
+        (changeCaseId)="changeCaseId($event)"
+      ></app-boxing>
+    </ng-container>
     <!-- end boxing -->
     <h2 class="product__content-title">Описание</h2>
     <section class="product-table product__text">
@@ -55,8 +62,13 @@
     <!-- end product-table -->
 
     <div class="product__button-line" *ngIf="product">
-      <a class="button button_fill" [href]="'/api/pdf/' + product.id" target="_blank">Скачать опись в MD</a>
-      <button class="button button_fill">Скачать приказа PDF</button>
+      <a
+        class="button button_fill"
+        [href]="'/api/pdf/' + product.id"
+        target="_blank"
+        >Скачать опись в PDF</a
+      >
+      <!-- <button class="button button_fill">Скачать приказа PDF</button> -->
     </div>
   </div>
 </div>
@@ -69,8 +81,11 @@
       администратор свяжется с Вами и утвердит конечный перечень. После заказа
       просмотр ваших данных будет доступно в корзине.
     </p>
-    <p class="product_form-constraint">{{ customDescription.length | numberFor3}} из {{maxCustomDescription | numberFor3}} символов</p>
-   
+    <p class="product_form-constraint">
+      {{ customDescription.length | numberFor3 }} из
+      {{ maxCustomDescription | numberFor3 }} символов
+    </p>
+
     <div class="product__form-item">
       <div class="product__label">Ваш перечень</div>
       <textarea
@@ -81,7 +96,7 @@
         [(ngModel)]="customDescription"
       ></textarea>
     </div>
-     <div class="product__form-item">
+    <div class="product__form-item">
       <div class="product__label">Ваш перечень файлом</div>
       <input type="file" #file multiple />
     </div>

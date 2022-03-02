@@ -1,0 +1,47 @@
+.processes { 
+  z-index: 1001;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  display: grid;
+  gap: 10px;
+}
+.process { 
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+  background-color: #fff;
+  border-left: 3px solid #dd2958;
+  border-right: 3px solid #0ad4d0;
+  border-radius: 8px;
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+}
+.total {
+  width: 69px;
+  font-size: 12px;
+  flex: 0 0 69px;
+  text-align: right;
+  font-family: monospace;
+}
+.bar {
+  width: 200px;
+  flex: 0 0 200px;
+  height: 3px;
+  border: 2px;
+  background: #eee;
+}
+
+.bar-line {
+
+  background: #dd2958;
+  height: 3px; 
+  transition: width 0.5s ease-in-out;
+}
+
+.icon {
+  text-align: center;  
+  width: 20px;
+  font-size: 16px;
+  flex: 0 0 20px;
+}

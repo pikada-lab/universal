@@ -1,7 +1,7 @@
 <!-- start aid-box -->
 <label class="aid-box" [for]="'box_' + case.id" >
   <div class="aid-box__image">
-    <img [src]="case.img" />
+    <img [src]="img" />
   </div>
   <div class="aid-box__stereo-box">
     <div class="aid-box__chackbox">
@@ -14,7 +14,7 @@
         (change)="saveCase.emit(caseId)"
       />
     </div>
-    <div class="aid-box__text">{{ case.title }}</div>
+    <div class="aid-box__text">{{ case.title }}<br/><small>{{case.subtitle}}</small></div>
     <div class="aid-box__price">+ {{ case.price | numberFor3: 2 }} ₽</div>
   </div>
 </label>

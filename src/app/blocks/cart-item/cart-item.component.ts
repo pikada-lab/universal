@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { CartService } from 'src/app/business/cart.service';
 import { ProductService } from 'src/app/business/product.service';
@@ -12,41 +13,55 @@ import { CartItem, Products } from 'src/app/models';
 export class CartItemComponent implements OnInit {
   @Input()
   item!: CartItem;
-  
+
   product: Products | undefined;
+
+  img?: SafeResourceUrl;
 
   openSmeta = new EventEmitter<boolean>();
 
   buttonsSmeta = [
     {
-      title: "Перейти к товару",
+      title: 'Перейти к товару',
       event: () => {
-        if(this.product) {
-          this.router.navigateByUrl("/products/"+this.product.id+"#custom-order");
+        if (this.product) {
+          this.router.navigateByUrl(
+            '/products/' + this.product.id + '#custom-order'
+          );
         }
         this.openSmeta.emit(false);
-      }
+      },
     },
     {
-      title: "Закрыть",
-      event: () => { 
+      title: 'Закрыть',
+      event: () => {
         this.openSmeta.emit(false);
-      }
-    }
-  ]
+      },
+    },
+  ];
 
   summ = 0;
   constructor(
     private router: Router,
     private cartService: CartService,
-    private productService: ProductService) {}
+    private ssd: DomSanitizer,
+    private productService: ProductService
+  ) {}
 
   ngOnInit(): void {
     this.calc();
     console.log(this.item);
-    this.productService.getProductById(this.item.productId).subscribe(r => {
+    this.productService.getProductById(this.item.productId).subscribe((r) => {
       this.product = r;
-    })
+      if(this.item.caseId === -1) {
+        this.img = this.ssd.bypassSecurityTrustResourceUrl(this.product.img);
+      }
+    });
+    if (this.item.caseId !== -1) {
+      this.productService.getProductById(this.item.caseId).subscribe((r) => {
+        this.img = this.ssd.bypassSecurityTrustResourceUrl(r.img);
+      });
+    } 
   }
 
   setQtty(n: number) {

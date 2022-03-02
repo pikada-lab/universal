@@ -6,7 +6,8 @@ import { Component } from '@angular/core';
   <app-header></app-header>
   <router-outlet></router-outlet>
   <app-footer></app-footer>
-  <app-cart></app-cart>`,
+  <app-cart></app-cart>
+  <app-process></app-process>`,
   styleUrls: []
 })
 export class AppComponent {

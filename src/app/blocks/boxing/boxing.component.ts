@@ -15,9 +15,13 @@ export class BoxingComponent implements OnInit {
 
   @Output()
   changeCaseId = new EventEmitter<number>();
+
+  @Input()
+  product!: Products;
   constructor() { }
 
   ngOnInit(): void {
+    console.log(this.product, this.cases);
   }
 
   saveCase() {

@@ -10,7 +10,7 @@ export class CounterComponent implements OnInit {
   count = 1;
 
   @Input()
-  max = 10;
+  max = 99;
 
   @Input()
   isOnCart = false;

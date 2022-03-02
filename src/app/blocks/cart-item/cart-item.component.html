@@ -12,7 +12,7 @@
       </div>
 
       <div class="cart-item__image-mobile">
-        <img [src]="product.img" alt="Product" [routerLink]="'/products/'+product.id" />
+        <img [src]="img" alt="Product" [routerLink]="'/products/'+product.id" />
       </div>
     </div>
     <div class="cart-item__tag"  *ngIf="item.special">
@@ -41,7 +41,7 @@
     </div>
   </div>
   <div class="cart-item__image">
-    <img [src]="product.img" alt="Product"  [routerLink]="'/products/'+product.id" />
+    <img [src]="img" alt="Product"  [routerLink]="'/products/'+product.id" />
   </div>
   <div class="cart-item__close" (click)="remove()">
     <div class="fa fa-times"></div>

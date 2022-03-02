@@ -1,6 +1,6 @@
 .greeter__back {
   width: 100%;
-  height: 655px;
+  height: 700px;
   user-select: none;
 }
 
@@ -39,12 +39,12 @@
 .greeter__list-button {
   margin-top: 50px;
 }
-.circle { 
+.circle {
   flex: 1;
   height: 465px;
   position: relative;
 }
-.circle canvas { 
+.circle canvas {
   width: 100%;
   position: relative;
   z-index: 2;
@@ -52,8 +52,9 @@
 }
 .circle__back {
   position: absolute;
-  top: -261px;
+  top: -153px;
   left: 30px;
+  transform: scaleY(0.9);
   z-index: 1;
 }
 
@@ -66,8 +67,9 @@
     height: calc(589px * 465 / 1000);
   }
   .circle__back {
-    width: 90%;  
-      top: -277px;
+    width: 90%;
+    top: -218px;
+    transform: scaleY(0.9);
   }
   .greeter__circle {
     margin-left: 0px;
@@ -145,15 +147,16 @@
     flex-direction: column-reverse;
   }
   .circle__back {
-    width: 90%;  
-     left: 5%;
+    width: 90%;
+    left: 5%;
+    top: -251px;
   }
   .circle {
-    height: calc((100% ) * 465 / 1000);
+    height: calc((100%) * 465 / 1000);
   }
   .circle canvas {
     width: 100%;
-    height: calc((100% ) * 465 / 1000);
+    height: calc((100%) * 465 / 1000);
   }
   .greeter__circle {
     margin-top: 50px;
@@ -180,20 +183,23 @@
   }
 }
 
-
-
 .cart-form__container {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-
 .cart-form__valid .cart-form__label {
   color: #050;
 }
-.cart-form__valid  input {
+.cart-form__valid input {
   color: #050;
+}
+.cart-form__invalid .cart-form__label {
+  color: #dd2958;
+}
+.cart-form__invalid input {
+  color: #a00;
 }
 
 .cart-form__form-item {

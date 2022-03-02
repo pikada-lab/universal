@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, NEVER, of, switchMap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Cart, CartItem, Products } from '../models';
 import { ToastService } from '../toast.service';
@@ -14,22 +14,32 @@ export interface UploadedFile {
   create_at: number;
   mustDelete: number;
 }
-
+export interface LoadedValue {
+  done: boolean;
+  type?: 0 | 1 | 2 | 3;
+  loaded?: number;
+  total?: number;
+  name: string;
+  id: number;
+}
 @Injectable({
   providedIn: 'root',
 })
 export class CartService {
- 
+
+
+  process: LoadedValue[] = [];
+
   private items: CartItem[] = [];
   private cart: Cart = new Cart();
   private host: string;
   constructor(
     private http: HttpClient,
     @Inject(PLATFORM_ID) private platformId: string,
-    private t: ToastService 
+    private t: ToastService
   ) {
     this.host = environment.host;
-    console.log("Cart",platformId);
+    console.log('Cart', platformId);
     if (platformId == 'browser') {
       this.load();
       setInterval(() => {
@@ -40,7 +50,7 @@ export class CartService {
               r.create_at +
               r.ttl -
               d +
-              new Date().getTimezoneOffset() * 60 * 1000; 
+              new Date().getTimezoneOffset() * 60 * 1000;
             if (r.create_at + r.ttl < d) {
               let index = item.customDescriptionFile.findIndex(
                 (j) => j.id == r.id
@@ -57,7 +67,7 @@ export class CartService {
             r.create_at +
             r.ttl -
             d +
-            new Date().getTimezoneOffset() * 60 * 1000; 
+            new Date().getTimezoneOffset() * 60 * 1000;
           if (r.create_at + r.ttl < d) {
             let index = this.cart.customDescriptionFile.findIndex(
               (j) => j.id == r.id
@@ -100,9 +110,12 @@ export class CartService {
   ) {
     if (this.has(product, special)) throw new Error('Уже в корзине');
     let item = new CartItem(
-      product.id, qtty,
-      caseId, special,
-      price, priceCase
+      product.id,
+      qtty,
+      caseId,
+      special,
+      price,
+      priceCase
     );
     this.items.push(item);
     this.save();
@@ -148,17 +161,68 @@ export class CartService {
   }
 
   async uploadFile(customDescriptionFile: FileList): Promise<UploadedFile[]> {
-    console.log(customDescriptionFile);
-    if (!customDescriptionFile?.length) return [];
-    let fd = new FormData();
-    for (let i = 0; i < customDescriptionFile.length; i++) {
-      let file = customDescriptionFile.item(i);
-      if (file === null) continue;
-      fd.append('customer-file', file, file.name);
-    }
-    return await firstValueFrom(
-      this.http.post<UploadedFile[]>(this.host + '/api/files', fd)
-    );
+    return new Promise((resolve, reject) => {
+      if (!customDescriptionFile?.length) resolve([]);
+      let fd = new FormData();
+      for (let i = 0; i < customDescriptionFile.length; i++) {
+        let file = customDescriptionFile.item(i);
+        if (file === null) continue;
+        fd.append('customer-file', file, file.name);
+      }
+
+      const request = new HttpRequest('POST', `${this.host}/api/files`, fd, {
+        reportProgress: true,
+        responseType: 'json',
+      });
+      let id = Math.random();
+      const process: LoadedValue = {
+        id: id,
+        done: false,
+        name: "Загрузка " +customDescriptionFile.length + " файлов/а."
+      };
+      this.addProcess(process)
+      this.http
+        .request(request)
+        .pipe(
+          switchMap((value: HttpEvent<any>) => { 
+            if(value instanceof HttpResponse) { 
+              console.log(id, "ENDED");
+              this.removeProcess(id);
+              return of(value.body);
+            }
+            if(value.type === 0) {
+              process.type = value.type; 
+              return NEVER;
+            }            
+            if(value.type === 1) {
+              if(process.done) { 
+                this.removeProcess(id);
+                throw new Error(process.name + " отменено");
+              }
+              if(value.total) { 
+                process.total = value.total;
+                process.type = value.type;
+                process.loaded = value.loaded; 
+              }
+              return NEVER;
+            } 
+            if(value.type === 3) { 
+              return NEVER;
+            }
+            return NEVER;
+          })
+        )
+        .subscribe({
+          next: (v) => resolve(v),
+          error: (e) => { 
+            this.removeProcess(id);
+            reject(e);  
+          },
+          complete: () => {
+            this.removeProcess(id);
+          },
+        });
+    });
   }
   async deleteFile(product: Products, fileId: string) {
     let item = this.get(product, true);
@@ -231,11 +295,11 @@ export class CartService {
   }
 
   order() {
-     let ref = {
-       cart: this.cart,
-       items: this.items,
-     }
-    return this.http.post(this.host + "/api/order", ref) 
+    let ref = {
+      cart: this.cart,
+      items: this.items,
+    };
+    return this.http.post(this.host + '/api/order', ref);
   }
 
   sendRequest() {
@@ -243,7 +307,7 @@ export class CartService {
       cart: this.cart,
       items: [],
     };
-    return this.http.post<number>(this.host + "/api/order/request", ref) 
+    return this.http.post<{response: number}>(this.host + '/api/order/request', ref);
   }
 
   sendCallRequest() {
@@ -251,7 +315,31 @@ export class CartService {
       cart: this.cart,
       items: [],
     };
-    return this.http.post<number>(this.host + "/api/order/call", ref) 
+    return this.http.post<{response: number}>(this.host + '/api/order/call', ref);
   }
 
+
+  addProcess(pr: LoadedValue) {
+    return this.process.push(pr);
+  }
+
+  removeProcess(id: number) {
+    let index = this.process.findIndex(r => r.id === id); 
+    if(~index) {
+      this.process.splice(index, 1);
+    }
+  }
+  getProcessById(id: number) {
+    let index = this.process.findIndex(r => r.id === id);
+    if(~index) {
+     return this.process[index];
+    }
+    return null;
+  }
+
+  deleteProcess(id: number) {
+    let proc = this.getProcessById(id);
+    if(!proc) return;
+    proc.done  = true
+  }
 }

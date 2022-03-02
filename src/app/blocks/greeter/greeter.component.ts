@@ -15,56 +15,33 @@ declare const window: any;
 export class GreeterComponent implements OnInit, OnDestroy {
   /** TODO Заменить на получение с сервера */
   imgList = [
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/1.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/2.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/3.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/4.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/5.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/6.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/7.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/8.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/10.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/11.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/12.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/13.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/14.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/15.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/16.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/17.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/18.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/19.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/20.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/21.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/22.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/23.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/24.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/25.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/26.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/27.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/28.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/29.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/30.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/31.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/32.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/33.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/34.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/35.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/36.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/37.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/38.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/39.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/40.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/41.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/42.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/43.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/44.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/45.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/46.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/47.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/48.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/49.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/50.png',
-    'https://res.cloudinary.com/dewn0wy2s/image/upload/v1592668487/360/51.png',
+    '/assets/rotas/1.png',
+    '/assets/rotas/2.png',
+    '/assets/rotas/3.png',
+    '/assets/rotas/4.png',
+    '/assets/rotas/5.png',
+    '/assets/rotas/6.png',
+    '/assets/rotas/7.png',
+    '/assets/rotas/8.png',
+    '/assets/rotas/10.png',
+    '/assets/rotas/11.png',
+    '/assets/rotas/12.png',
+    '/assets/rotas/13.png',
+    '/assets/rotas/14.png',
+    '/assets/rotas/15.png',
+    '/assets/rotas/16.png',
+    '/assets/rotas/17.png',
+    '/assets/rotas/18.png',
+    '/assets/rotas/19.png',
+    '/assets/rotas/20.png',
+    '/assets/rotas/21.png',
+    '/assets/rotas/22.png',
+    '/assets/rotas/23.png',
+    '/assets/rotas/24.png',
+    '/assets/rotas/25.png',
+    '/assets/rotas/26.png',
+    '/assets/rotas/27.png',
+    '/assets/rotas/28.png', 
   ];
 
   private stage: any;
@@ -83,7 +60,9 @@ export class GreeterComponent implements OnInit, OnDestroy {
   subscribe: Subscription | null = null;
 
   cart!: Cart;
-  constructor(private router: Router, private cartService: CartService, private t: ToastService) {}
+  constructor(private router: Router, private cartService: CartService, private t: ToastService) {
+    this.imgList.reverse();
+  }
 
   ngOnInit(): void {
     if (typeof window === 'object') {
@@ -93,7 +72,10 @@ export class GreeterComponent implements OnInit, OnDestroy {
         window.addEventListener('load', () => this.initRotas(), false);
       }
     }
-    this.cart = this.cartService.getMetadata();
+    this.cart = this.cartService.getMetadata(); 
+    this.validPhone();
+    this.validMail();
+    this.validName();
   }
   ngOnDestroy(): void {
     this.subscribe?.unsubscribe();
@@ -247,14 +229,15 @@ export class GreeterComponent implements OnInit, OnDestroy {
   sendRequest() { 
     this.validPhone();
     this.validMail();
+    this.validName();
     this.cartService.save()
-    console.log(!this.isValidMail, !this.isValidPhone, !this.cart.name, this.cart.name.length < 2);
-    if(!this.isValidMail || !this.isValidPhone || !this.cart.name || this.cart.name.length < 2) {
+    console.log(!this.isValidMail, !this.isValidPhone, !this.isValidName);
+    if(!this.isValidMail || !this.isValidPhone || !this.isValidName) {
       this.t.toast("Проверьте данные формы, все поля обязательны для заполнения");
       return;
     } 
-    this.cartService.sendRequest().subscribe((id: number) => {
-      this.t.toast("Запрос отправлен, номер заявки: "+id);
+    this.cartService.sendRequest().subscribe((res: {response: number}) => {
+      this.t.toast("Запрос отправлен, номер заявки: "+ res.response);
       this.openRequest.emit(false);
     })  
   }
@@ -266,8 +249,8 @@ export class GreeterComponent implements OnInit, OnDestroy {
       this.t.toast("Проверьте данные формы, все поля обязательны для заполнения");
       return;
     } 
-    this.cartService.sendCallRequest().subscribe((id: number) => {
-      this.t.toast("Звонок заказан, номер заявки: "+id);
+    this.cartService.sendCallRequest().subscribe((res: {response: number}) => {
+      this.t.toast("Звонок заказан, номер заявки: "+ res.response);
       this.open.emit(false); 
     });
   }
@@ -277,6 +260,10 @@ export class GreeterComponent implements OnInit, OnDestroy {
     } else {
       this.isValidMail = false;
     }
+  }
+  isValidName = false;
+  validName() {
+    this.isValidName = !!this.cart.name && this.cart.name.length > 2;
   }
   isValidPhone = false;
   validPhone() {

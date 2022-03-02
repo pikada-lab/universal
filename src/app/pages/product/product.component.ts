@@ -13,6 +13,9 @@ import { CartService, UploadedFile } from 'src/app/business/cart.service';
 import { ProductService } from 'src/app/business/product.service';
 import { CartItem, Products } from 'src/app/models';
 import { ToastService } from 'src/app/toast.service';
+import { Meta } from '@angular/platform-browser';
+import { Title } from "@angular/platform-browser";
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-product',
@@ -23,7 +26,7 @@ import { ToastService } from 'src/app/toast.service';
     './boxing.css',
   ],
 })
-export class ProductComponent implements OnInit {
+export class ProductComponent implements OnInit { 
   public count: number = 1;
   public product: Products | undefined;
   public caseId = 53385;
@@ -47,6 +50,7 @@ export class ProductComponent implements OnInit {
 
   cases: Products[] = [];
   img!: SafeUrl;
+  category?: any;
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: string,
@@ -54,39 +58,35 @@ export class ProductComponent implements OnInit {
     private cartService: CartService,
     private route: ActivatedRoute,
     private t: ToastService,
-    private ssd: DomSanitizer
+    private ssd: DomSanitizer,
+    private meta: Meta,
+    private titleService: Title
   ) {}
 
   ngOnInit(): void {
     this.productService.getProductByCategory(377).subscribe((r) => {
-      this.cases = r;
+      this.cases = r.sort((a,b) => a.price - b.price);
     });
+
+    if(typeof window == "object") {
+      window.document.body.scrollTop = 0; 
+    }
+
     this.route.params.subscribe((params: Params) => {
-      this.productService.getProductById(params['id']).subscribe((r) => {
-        this.product = r as Products;
-        this.img = this.ssd.bypassSecurityTrustUrl(this.product.img);
-        this.caseId = this.product.defaultCase;
-        if (this.platformId == 'browser') {
-          let item = this.cartService.get(this.product, false);
-          let itemSpecial = this.cartService.get(this.product, true);
-          this.isOnCart = false;
-          this.isOnCartSpecial = false;
-          if (item) {
-            this.count = item.qtty;
-            this.caseId = item.caseId;
-            console.log('CASE:', this.caseId);
-            this.isOnCart = true;
-          }
-          if (itemSpecial) {
-            this.countSpecial = itemSpecial.qtty;
-            this.customDescription = itemSpecial.customDescription ?? '';
-            if (Array.isArray(itemSpecial.customDescriptionFile)) {
-              this.customDescriptionFileUploaded =
-                itemSpecial.customDescriptionFile;
-            }
-            this.isOnCartSpecial = true;
-          }
-        }
+      if(typeof window == "object") {
+         window.document.body.scrollTop = 0; 
+      }
+      forkJoin( [
+        this.productService.getProductByCategory(377),
+        this.productService.getProductById(params['id']), 
+      ]).subscribe(([cases, r]) => { 
+        this.cases = cases.sort((a,b) => a.price - b.price);
+        this.product = r as Products; 
+        this.initProduct();
+
+        this.productService.getCategoryByID(this.product.categoryID).subscribe((category: any) => {
+          this.category = category;
+        })
       });
     });
 
@@ -159,13 +159,49 @@ export class ProductComponent implements OnInit {
     });
   }
 
+  private initProduct() {
+
+    this.titleService.setTitle(this.product!.title ?? "Аптечка на заказ"); 
+    this.meta.updateTag({name: "description", content: this.product!.subtitle ?? "Медицинская укладка"}); 
+    this.img = this.ssd.bypassSecurityTrustUrl(this.product!.originalImg);
+    console.log(this.product);
+    this.caseId = this.product!.defaultCase;
+    if (this.platformId == 'browser') {
+      let item = this.cartService.get(this.product!, false);
+      let itemSpecial = this.cartService.get(this.product!, true);
+      this.isOnCart = false;
+      this.isOnCartSpecial = false;
+      if (item) {
+        this.count = item.qtty;
+        this.caseId = item.caseId; 
+        console.log('CASE:', this.caseId);
+        this.isOnCart = true;
+      }
+      if (itemSpecial) {
+        this.countSpecial = itemSpecial.qtty;
+        this.customDescription = itemSpecial.customDescription ?? '';
+        if (Array.isArray(itemSpecial.customDescriptionFile)) {
+          this.customDescriptionFileUploaded =
+            itemSpecial.customDescriptionFile;
+        }
+        this.isOnCartSpecial = true;
+      }
+      if(this.caseId != -1) {
+        const caseAid = this.cases.find(pr => pr.id == this.caseId);
+        if(caseAid) {
+          this.img = this.ssd.bypassSecurityTrustUrl(caseAid!.originalImg);
+        }
+      }
+    }
+  }
+
   changeCaseId(caseId: number) {
     if(this.caseId == caseId) return;
     this.caseId = caseId;
     console.log(this.caseId);
     let box = this.cases.find((r) => r.id == this.caseId);
     this.saveCase();
-    if (box) this.img = this.ssd.bypassSecurityTrustUrl(box.img);
+    if (box) this.img = this.ssd.bypassSecurityTrustUrl(box.originalImg);
   }
 
   saveCase() {

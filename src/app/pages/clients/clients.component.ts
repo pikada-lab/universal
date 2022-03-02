@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { ConfigService } from 'src/app/business/config.service';
@@ -17,14 +18,25 @@ import { bricks } from './bricks';
 })
 export class ClientsComponent implements OnInit, AfterViewInit {
   company?: any[];
-  constructor(private config: ConfigService, private router: Router) {}
- 
+  constructor(
+    private config: ConfigService,
+    private router: Router,
+    private meta: Meta,
+    private titleService: Title
+  ) {}
+
   instance: any;
   emmiter: any;
 
   create = new EventEmitter<any>();
-  isAfterViewInit = false; 
+  isAfterViewInit = false;
   ngOnInit(): void {
+    this.titleService.setTitle('Клиенты');
+    this.meta.updateTag({
+      name: 'description',
+      content: 'С нами работают крупные компании',
+    });
+
     this.create.subscribe((r) => {
       console.log('INIT');
       if (this.company && this.isAfterViewInit) {

@@ -1,8 +1,8 @@
 {
   "extends": "./tsconfig.app.json",
   "compilerOptions": {
-    "outDir": "./out-tsc/app-server",
-    "module": "commonjs",
+    "outDir": "./out-tsc/app-server", 
+    "module": "ES6",
     "types": ["node"]
   },
   "files": [

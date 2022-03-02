@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Products } from 'src/app/models';
 
 @Component({
@@ -16,9 +17,12 @@ export class AidBoxComponent implements OnInit {
 
   @Output()
   saveCase = new EventEmitter<number>();
+
+  img?: SafeResourceUrl;
   
-  constructor() { }
+  constructor(private ssd: DomSanitizer) { }
 
   ngOnInit(): void {
+    this.img = this.ssd.bypassSecurityTrustResourceUrl(this.case.img);
   } 
 }

@@ -36,6 +36,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { BytesPipe } from './business/bytes.pipe';
 import { ModalComponent } from './modal/modal.component';
 import { AidBoxComponent } from './blocks/boxing/aid-box/aid-box.component';
+import { ProcessComponent } from './blocks/process/process.component';
 
 @NgModule({
   imports: [
@@ -73,6 +74,7 @@ import { AidBoxComponent } from './blocks/boxing/aid-box/aid-box.component';
     BytesPipe,
     ModalComponent,
     AidBoxComponent,
+    ProcessComponent,
   ],
   bootstrap: [AppComponent],
 })

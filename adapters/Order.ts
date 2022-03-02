@@ -34,7 +34,7 @@ async function saveOrder(connection: Connection, cart: Cart): Promise<number> {
   const [results, field ] = await connection.query<OkPacket>(
       'INSERT INTO `orderv2`(`id`, `name`, `phone`, `mail`, `address`, `comment`, `status`, `date`, `delivery`, `payment`, `custormerFiles`) VALUES ' +
        `(NULL, ?, ?, ?, ?, ?, 0, NOW(), ?, ?, ?)`,
-       [cart.name, cart.phone, cart.mail, cart.address, cart.comment,   cart.deliveryType,  cart.paymentType, cart.customDescriptionFile.join()] ); 
+       [cart.name, cart.phone, cart.mail, cart.address ?? '', cart.comment ?? '',   cart.deliveryType,  cart.paymentType, cart.customDescriptionFile.join()] ); 
        cart.id = results.insertId;
   
   return results.insertId; 
@@ -154,12 +154,13 @@ export class Order {
   }
 
   async getProductByID(id: number) {
-    if(!id) return null;
+    if(!id || id === -1) return null;
     let caseRef = await this.http.get<any>(
       'http://127.0.0.1:9001/v1/product/' + id,
       {},
       { 'user-agent': 'aptechki.ru' }
     );
+    console.log(id, caseRef);
     return ProductAdapter(caseRef[0]);
   }
 
@@ -177,7 +178,7 @@ export class Order {
       `*${product.title}* - ${product.subtitle.substring(0, 50)}...\n` +
       (box ? `Упакован в *${box.title}*\n` : `Упаковка не выбрана\n`) +
       `Цена: ${item.price / 100}  + кейс: ${item.priceCase / 100} = ${
-        (item.price / 100) * (item.priceCase / 100)
+        (item.price / 100) + (item.priceCase / 100)
       } Руб. x ${item.qtty} Шт.\n` +
       `Специальный: _${item.special ? 'Да' : 'Нет'} Заказ номер ${
         this.cart.id
@@ -193,7 +194,7 @@ export class Order {
 
   async send(): Promise<number> { 
     // TODO ID 
-      const connect = await openConnection();
+    const connect = await openConnection();
     try { 
       let id = await saveOrder(connect, this.cart);  
       for(let item of this.items) {

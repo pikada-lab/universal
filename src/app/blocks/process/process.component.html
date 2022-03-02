@@ -1,0 +1,11 @@
+<div class="processes">
+  <div class="process" *ngFor="let proc of process">
+    <div class="icon"><i class="fa fa-upload"></i></div>
+    <div class="total">{{  proc?.loaded ?? 0 | bytes:2 }}</div>
+    <div class="bar">
+      <div class="bar-line" [style]="'width: ' + getProcent(proc) + '%'"></div>
+    </div>
+    <div class="total">{{proc?.total ?? 0 | bytes:2 }}</div>
+    <div class="icon" (click)="cancel(proc.id)"><i class="fa fa-times"></i></div>
+  </div> 
+</div> 
