@@ -3,8 +3,8 @@ import {
   ElementRef,
   EventEmitter,
   Inject,
-  OnInit, 
-  PLATFORM_ID, 
+  OnInit,
+  PLATFORM_ID,
   Optional,
   ViewChild,
 } from '@angular/core';
@@ -13,14 +13,14 @@ import { DOCUMENT } from '@angular/common';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ActivatedRoute, Params } from '@angular/router';
 import { CartService, UploadedFile } from 'src/app/business/cart.service';
- 
+
 import { CartItem, Products } from 'src/app/models';
 import { ToastService } from 'src/app/toast.service';
 import { Meta } from '@angular/platform-browser';
-import { Title } from "@angular/platform-browser";
+import { Title } from '@angular/platform-browser';
 import { forkJoin } from 'rxjs';
 import { isPlatformServer } from '@angular/common';
-import { REQUEST } from '@nguniversal/express-engine/tokens'; 
+import { REQUEST } from '@nguniversal/express-engine/tokens';
 import { Request } from 'express';
 import { ProductService } from 'src/app/business';
 
@@ -33,7 +33,7 @@ import { ProductService } from 'src/app/business';
     './boxing.css',
   ],
 })
-export class ProductComponent implements OnInit { 
+export class ProductComponent implements OnInit {
   public count: number = 1;
   public product: Products | undefined;
   public caseId = 53385;
@@ -52,7 +52,7 @@ export class ProductComponent implements OnInit {
   public removeSpecial = new EventEmitter<void>();
   public orderSpecial = new EventEmitter<number>();
 
-  @ViewChild('file', { static: false }) 
+  @ViewChild('file', { static: false })
   customeFile!: ElementRef<HTMLInputElement>;
 
   cases: Products[] = [];
@@ -76,34 +76,30 @@ export class ProductComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.productService.getProductByCategory(377).subscribe((r) => {
-      this.cases = r.sort((a,b) => a.price - b.price);
+    this.scrollTop();
+    this.route.queryParams.subscribe((params: Params) => {
+      this.caseId = +(params['box'] ?? this.product!.defaultCase); 
     });
-
-    if(typeof window == "object") {
-      this.document.body.scrollTop = 0; 
-    }
-
     this.route.params.subscribe((params: Params) => {
-      this.updateCanonical(params['id']); 
-      if(typeof window == "object") {
-        this.document.body.scrollTop = 0; 
-      }
-      forkJoin( [
+      const productId = +params['id']; 
+      this.updateCanonical(productId);
+      this.scrollTop();
+      forkJoin([
         this.productService.getProductByCategory(377),
-        this.productService.getProductById(params['id']), 
-      ]).subscribe(([cases, r]) => { 
-        this.cases = cases.sort((a,b) => a.price - b.price);
-        this.product = r as Products; 
+        this.productService.getProductById(productId),
+      ]).subscribe(([cases, r]) => {
+        this.cases = cases.sort((a, b) => a.price - b.price);
+        this.product = r as Products;
         this.initProduct();
 
-        this.productService.getCategoryByID(this.product.categoryID).subscribe((category: any) => {
-          this.category = category;
-          this.loading = false;
-        })
+        this.productService
+          .getCategoryByID(this.product.categoryID)
+          .subscribe((category: any) => {
+            this.category = category;
+            this.loading = false;
+          });
       });
     });
-
     this.remove.subscribe(() => {
       if (!this.product) return this.t.toast('Товар удалён из корзины');
       let item = this.cartService.get(this.product, false);
@@ -119,11 +115,11 @@ export class ProductComponent implements OnInit {
       if (item) {
         item.qtty = r;
         item.caseId = +this.caseId;
-        let box = this.cases.find(r => r.id == this.caseId);
+        let box = this.cases.find((r) => r.id == this.caseId);
         this.currentCase = box;
         this.cartService.save();
       } else {
-        let box = this.cases.find(r => r.id == this.caseId);
+        let box = this.cases.find((r) => r.id == this.caseId);
         this.currentCase = box;
         this.cartService.add(
           this.product,
@@ -131,12 +127,11 @@ export class ProductComponent implements OnInit {
           +this.caseId,
           false,
           this.product.price,
-          (box?.price ?? 0)
+          box?.price ?? 0
         );
         this.isOnCart = true;
       }
     });
-
     this.removeSpecial.subscribe(() => {
       if (!this.product) return this.t.toast('Нет товара');
       this.t.toast('Товар с описью удалён из корзины');
@@ -150,33 +145,46 @@ export class ProductComponent implements OnInit {
     this.orderSpecial.subscribe(async (qtty: number) => {
       if (!this.product) return this.t.toast('Нет товара', 'error');
       try {
-        let item = this.cartService.get(this.product, true); 
+        let item = this.cartService.get(this.product, true);
         if (item) {
           item.customDescription = this.customDescription;
           this.customDescriptionFileUploaded = item.customDescriptionFile;
           item.qtty = qtty;
         } else {
-          item = this.cartService.add(this.product, qtty, +this.caseId, true, this.product.price, 0);
+          item = this.cartService.add(
+            this.product,
+            qtty,
+            +this.caseId,
+            true,
+            this.product.price,
+            0
+          );
           item.customDescription = this.customDescription;
           this.customDescriptionFileUploaded = item.customDescriptionFile;
           this.isOnCartSpecial = true;
-        } 
+        }
         await this.saveFiles(item);
         this.cartService.save();
         this.t.toast('Товар с описью добавлен в корзину');
       } catch (ex: any) {
-        this.t.toast(ex.message,'error');
+        this.t.toast(ex.message, 'error');
       }
     });
   }
 
+  private scrollTop() {
+    if (typeof window == 'object') {
+      this.document.body.scrollTop = 0;
+    }
+  }
 
   private updateCanonical(id: any) {
-    const canonicalUrl = "https://aptechki.ru/products/"+id ;
- 
+    const canonicalUrl = 'https://aptechki.ru/products/' + id;
+
     if (this.platformId == 'browser') {
       const head = this.document.getElementsByTagName('head')[0];
-      var element: HTMLLinkElement = this.document.querySelector(`link[rel='canonical']`) || null;
+      var element: HTMLLinkElement =
+        this.document.querySelector(`link[rel='canonical']`) || null;
       if (element == null) {
         element = this.document.createElement('link') as HTMLLinkElement;
         head.appendChild(element);
@@ -184,26 +192,42 @@ export class ProductComponent implements OnInit {
       element.setAttribute('rel', 'canonical');
       element.setAttribute('href', canonicalUrl);
     }
-    
+
     if (isPlatformServer(this.platformId)) {
       if (this.request.res) {
-        this.request.res.set("Link",`<${canonicalUrl}>; rel="canonical"`); 
+        this.request.res.set('Link', `<${canonicalUrl}>; rel="canonical"`);
+        const element = this.document.createElement('link') as HTMLLinkElement;  
+        element.setAttribute('rel', 'canonical');
+        element.setAttribute('href', canonicalUrl);
+        (this.document.getElementsByTagName("link")[0] as HTMLHeadElement).after(element);
       }
     }
-    
-    
   }
 
-  private initProduct() { 
-    this.titleService.setTitle(this.product!.title ?? "Аптечка на заказ"); 
-    this.meta.updateTag({name: "description", content: this.product!.subtitle ?? "Медицинская укладка"});
-    this.meta.updateTag({property: "og:title", content: this.product!.title ?? "Аптечка на заказ"});  
-    this.meta.updateTag({property: "og:image", content: this.product!.originalImg ?? "https://aptechki.ru/assets/logo.apt2@2x.png"});  
-    this.meta.updateTag({property: "og:description", content: this.product!.subtitle ?? "Медицинская укладка"});  
- 
-    this.img = this.ssd.bypassSecurityTrustUrl(this.product!.originalImg);  
-    this.caseId =  this.route.snapshot.queryParams['box'] ?? this.product!.defaultCase;
- 
+  private initProduct() {
+    this.titleService.setTitle(this.product!.title ?? 'Аптечка на заказ');
+    this.meta.updateTag({
+      name: 'description',
+      content: this.product!.subtitle ?? 'Медицинская укладка',
+    });
+    this.meta.updateTag({
+      property: 'og:title',
+      content: this.product!.title ?? 'Аптечка на заказ',
+    });
+    this.meta.updateTag({
+      property: 'og:image',
+      content:
+        this.product!.originalImg ??
+        'https://aptechki.ru/assets/logo.apt2@2x.png',
+    });
+    this.meta.updateTag({
+      property: 'og:description',
+      content: this.product!.subtitle ?? 'Медицинская укладка',
+    });
+
+    this.img = this.ssd.bypassSecurityTrustUrl(this.product!.originalImg);
+    this.caseId = this.caseId ?? this.product!.defaultCase;
+    console.log('this.caseId', this.caseId, this.product!.defaultCase);
 
     if (this.platformId == 'browser') {
       let item = this.cartService.get(this.product!, false);
@@ -212,7 +236,7 @@ export class ProductComponent implements OnInit {
       this.isOnCartSpecial = false;
       if (item) {
         this.count = item.qtty;
-        this.caseId = item.caseId; 
+        this.caseId = item.caseId;
         this.isOnCart = true;
       }
       if (itemSpecial) {
@@ -224,22 +248,21 @@ export class ProductComponent implements OnInit {
         }
         this.isOnCartSpecial = true;
       }
-      if(this.caseId != -1) {
-        const caseAid = this.cases.find(pr => pr.id == this.caseId);
-        if(caseAid) {
+      if (this.caseId != -1) {
+        const caseAid = this.cases.find((pr) => pr.id == this.caseId);
+        if (caseAid) {
           this.img = this.ssd.bypassSecurityTrustUrl(caseAid!.originalImg);
         }
       }
     }
-    let box = this.cases.find(r => r.id == this.caseId);
+    let box = this.cases.find((r) => r.id == this.caseId);
     this.currentCase = box;
   }
 
-
   currentCase?: Products;
   changeCaseId(caseId: number) {
-    if(this.caseId == caseId) return;
-    this.caseId = caseId; 
+    if (this.caseId == caseId) return;
+    this.caseId = caseId;
     let box = this.cases.find((r) => r.id == this.caseId);
     this.saveCase();
     this.currentCase = box;
@@ -260,18 +283,18 @@ export class ProductComponent implements OnInit {
   }
   async saveFiles(item: CartItem) {
     try {
-    item.customDescription = this.customDescription;
-    if (this.customeFile.nativeElement.files) {
-      let file = await this.cartService.uploadFile(
-        this.customeFile.nativeElement.files
-      );
-      if (file) {
-        item.customDescriptionFile.push(...file);
+      item.customDescription = this.customDescription;
+      if (this.customeFile.nativeElement.files) {
+        let file = await this.cartService.uploadFile(
+          this.customeFile.nativeElement.files
+        );
+        if (file) {
+          item.customDescriptionFile.push(...file);
+        }
       }
+    } catch (ex: any) {
+      throw new Error('Не удалось загрузить файл, возможно он больше 8Мб');
     }
-  } catch(ex: any) { 
-    throw new Error("Не удалось загрузить файл, возможно он больше 8Мб");
-  }
   }
 
   deleteFile(file: string) {

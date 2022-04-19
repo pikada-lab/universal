@@ -1,7 +1,8 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { Meta, Title } from '@angular/platform-browser'; 
+import { DOCUMENT, isPlatformServer } from '@angular/common';
+import { Component, Inject, OnInit, Optional, PLATFORM_ID } from '@angular/core';
+import { Meta, Title } from '@angular/platform-browser';  
 import { ProductService } from 'src/app/business';
-import { Categories, Products } from 'src/app/models';
+import {  Products } from 'src/app/models';
 
 @Component({
   selector: 'app-products',
@@ -16,6 +17,8 @@ export class ProductsComponent implements OnInit {
   productsResult?: Products[];
 
   constructor(
+    @Inject(PLATFORM_ID) private platformId: string,
+    @Inject(DOCUMENT) private document: any, 
     @Inject(ProductService) private productService: ProductService,
     private meta: Meta,
     private titleService: Title
@@ -38,6 +41,13 @@ export class ProductsComponent implements OnInit {
           });
       }
     });
+
+    if (isPlatformServer(this.platformId)) { 
+        const element = this.document.createElement('link') as HTMLLinkElement;  
+        element.setAttribute('rel', 'canonical');
+        element.setAttribute('href', 'https://aptechki.ru/products');
+        (this.document.getElementsByTagName("link")[0] as HTMLHeadElement).after(element);
+    }
   }
 
   current: number | undefined;

@@ -1,9 +1,11 @@
+import { DOCUMENT, isPlatformServer } from '@angular/common';
 import {
   AfterViewInit,
   Component,
   EventEmitter,
   Inject,
   OnInit,
+  PLATFORM_ID,
 } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { debounceTime, timeout } from 'rxjs';
@@ -17,7 +19,9 @@ import { bricks } from './bricks';
 })
 export class ClientsComponent implements OnInit, AfterViewInit {
   company?: any[];
-  constructor(
+  constructor( 
+    @Inject(PLATFORM_ID) private platformId: string,
+    @Inject(DOCUMENT) private document: any,
     @Inject(ProductService) private productService: ProductService,
     private meta: Meta,
     private titleService: Title
@@ -46,6 +50,14 @@ export class ClientsComponent implements OnInit, AfterViewInit {
       this.company = r;
       this.create.emit();
     });
+    if (isPlatformServer(this.platformId)) {
+      const element = this.document.createElement('link') as HTMLLinkElement;
+      element.setAttribute('rel', 'canonical');
+      element.setAttribute('href', 'https://aptechki.ru/clients');
+      (this.document.getElementsByTagName('link')[0] as HTMLHeadElement).after(
+        element
+      );
+    }
   }
   resize(ev: any) {
     if (this.instance) {
