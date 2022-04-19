@@ -74,6 +74,7 @@ export class UniversalProduct {
     this.gnvls = json.gnvls;
     this.prescription = json.prescription;
     this.issue = json.issue;
+    this.rare = json.rare;
     this.theBest = json.theBest;
     this.latest = json.latest;
     this.regularPrice = +json.regularPrice;
@@ -103,6 +104,7 @@ export class UniversalProduct {
       gnvls: this.gnvls,
       prescription: this.prescription,
       issue: this.issue, 
+      rare: this.rare,
       theBest: this.theBest,
       latest: this.latest,
       regularPrice: this.regularPrice,
@@ -138,8 +140,8 @@ export class UniversalProduct {
     this.images.splice(order ?? 0, 0, resource);
     this.thumbnail.splice(order ?? 0, 0, {
       id: resource,
-      src: `http://auxilium-system.ru/storage/enlarged/${resource}.webp`,
-      original: `http://auxilium-system.ru/storage/original/${resource}.webp`,
+      src: `https://aptechki.ru/storage/enlarged/${resource}.webp`,
+      original: `https://aptechki.ru/storage/original/${resource}.webp`,
     });
   }
 
@@ -166,8 +168,8 @@ export class UniversalProduct {
       tmp.length,
       ...tmp.map((r) => ({
         id: r,
-        src: `http://auxilium-system.ru/storage/enlarged/${r}.webp`,
-        original: `http://auxilium-system.ru/storage/original/${r}.webp`,
+        src: `https://aptechki.ru/storage/enlarged/${r}.webp`,
+        original: `https://aptechki.ru/storage/original/${r}.webp`,
       }))
     );
   }
@@ -178,7 +180,7 @@ export class UniversalProduct {
 }
 
 
-export function ProductAdapter(product: UniversalProduct): Products {
-  let productRef = new UniversalProduct(product.id).initState(product);
+export function ProductAdapter(productRef: UniversalProduct): Products {
+  // let productRef = new UniversalProduct(product.id).initState(product);
   return new Products().initState(productRef);
 }

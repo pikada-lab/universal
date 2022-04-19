@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { CartService } from 'src/app/business/cart.service';
 import { Cart } from 'src/app/models';
 import { ToastService } from 'src/app/toast.service';
-
+declare const ym: any;
 declare const createjs: any;
 declare const window: any;
 @Component({
@@ -75,7 +75,7 @@ export class GreeterComponent implements OnInit, OnDestroy {
     this.cart = this.cartService.getMetadata(); 
     this.validPhone();
     this.validMail();
-    this.validName();
+    this.validName(); 
   }
   ngOnDestroy(): void {
     this.subscribe?.unsubscribe();
@@ -239,6 +239,10 @@ export class GreeterComponent implements OnInit, OnDestroy {
     this.cartService.sendRequest().subscribe((res: {response: number}) => {
       this.t.toast("Запрос отправлен, номер заявки: "+ res.response);
       this.openRequest.emit(false);
+
+      if(typeof ym != 'undefined') {
+        ym(87712774,'reachGoal','request')
+        }
     })  
   }
 
@@ -252,6 +256,9 @@ export class GreeterComponent implements OnInit, OnDestroy {
     this.cartService.sendCallRequest().subscribe((res: {response: number}) => {
       this.t.toast("Звонок заказан, номер заявки: "+ res.response);
       this.open.emit(false); 
+      if(typeof ym != 'undefined') {
+        ym(87712774,'reachGoal','call')
+        }
     });
   }
   validMail() {
@@ -302,7 +309,7 @@ export class GreeterComponent implements OnInit, OnDestroy {
     this.isValidPhone = false;
     return false;
   }
-  save() {
+  save() { 
     this.cartService.save();
   }
 }

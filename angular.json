@@ -24,8 +24,10 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
+              "src/favicon.svg",
               "src/assets",
-              "src/fonts"
+              "src/fonts",
+              "src/yandex_ef4e41c2217ea551.html"
             ],
             "styles": [
               "src/styles.css"
@@ -33,12 +35,12 @@
             "scripts": []
           },
           "configurations": {
-            "production": {
+            "production": { 
               "budgets": [
                 {
                   "type": "initial",
                   "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumError": "5mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -92,7 +94,9 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/assets",
+              "src/favicon.svg",
+              "src/yandex_ef4e41c2217ea551.html",
+              "src/assets", 
               "src/fonts"
             ],
             "styles": [
@@ -118,7 +122,7 @@
           "builder": "@angular-devkit/build-angular:server",
           "options": {
             "outputPath": "dist/server",
-            "main": "server.ts",
+            "main": "server.ts", 
             "tsConfig": "tsconfig.server.json"
           },
           "configurations": {

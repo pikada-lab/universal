@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { CartService } from 'src/app/business/cart.service';
-import { ProductService } from 'src/app/business/product.service';
+import { ProductService } from 'src/app/business';
+import { CartService } from 'src/app/business/cart.service'; 
 import { CartItem, Products } from 'src/app/models';
 
 @Component({
@@ -45,12 +45,11 @@ export class CartItemComponent implements OnInit {
     private router: Router,
     private cartService: CartService,
     private ssd: DomSanitizer,
-    private productService: ProductService
+   @Inject(ProductService) private productService: ProductService
   ) {}
 
   ngOnInit(): void {
     this.calc();
-    console.log(this.item);
     this.productService.getProductById(this.item.productId).subscribe((r) => {
       this.product = r;
       if(this.item.caseId === -1) {

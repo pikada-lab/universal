@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { Meta, Title } from '@angular/platform-browser';
-import { ProductService } from 'src/app/business/product.service';
+import { Meta, Title } from '@angular/platform-browser'; 
+import { ProductService } from 'src/app/business';
 import { Categories, Products } from 'src/app/models';
 
 @Component({
@@ -16,7 +16,7 @@ export class ProductsComponent implements OnInit {
   productsResult?: Products[];
 
   constructor(
-    private productService: ProductService,
+    @Inject(ProductService) private productService: ProductService,
     private meta: Meta,
     private titleService: Title
   ) {}
@@ -29,14 +29,12 @@ export class ProductsComponent implements OnInit {
     });
 
     this.productService.getCategory().subscribe((r) => {
-      this.category = r;
-      console.log(this.category);
+      this.category = r; 
       for (let cat of r) {
         this.productService
           .getProductByCategory(cat.categoryID)
           .subscribe((r) => {
-            this.products.set(cat.categoryID, r);
-            console.log(this.products);
+            this.products.set(cat.categoryID, r); 
           });
       }
     });

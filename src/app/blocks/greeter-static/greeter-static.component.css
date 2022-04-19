@@ -1,0 +1,276 @@
+#greeter2 {
+  background: #fff;
+  position: relative;
+}
+
+.greeter2__warp {
+  display: flex;
+  gap: 20px;
+}
+.greeter2__logo img {
+  width: 50%;
+}
+.greeter2__text {
+  position: relative;
+  z-index: 5;
+  flex: 1;
+  padding: 300px 0 200px;
+}
+.greeter2__text h1 {
+  font-size: 52px;
+  line-height: 1.2;
+  font-weight: 900;
+}
+.greeter2__text p {
+  color: #333;
+  font-weight: bold;
+}
+
+.greeter2__image {
+  z-index: 10;
+  flex: 1;
+  position: relative;
+}
+.greeter2__image img {
+  position: absolute;
+  top: 100px;
+  left: 0;
+  width: 100%;
+  transition: opacity 0.3s ease-in-out;
+}
+.hide {
+  opacity: 0.1;
+}
+.arca {
+  margin-top: -330px;
+  height: 500px;
+  width: 100%;
+  background: #eee;
+  position: relative;
+  overflow: hidden;
+}
+.arca-white {
+  background: #fff;
+  border-right: 35px solid #0ad4d0;
+  border-left: 35px solid #dd2958;
+  border-bottom: 0px solid transparent;
+  border-radius: 0 0 300px 300px;
+  height: 300px;
+  position: absolute;
+  top: -20px;
+  left: -55px;
+  right: -55px;
+}
+
+#layer-3 {
+  animation: move 8s 0.5s infinite ease-in-out;
+}
+#layer-2 {
+  animation: move 8s 0.3s infinite ease-in-out;
+}
+#layer-1 {
+  animation: move 8s infinite ease-in-out;
+}
+ 
+
+@media (max-width: 1380px) {
+  .greeter2__text h1 {
+    font-size: 32px;
+  }
+  .greeter2__text {
+    padding: 200px 0 200px;
+  }
+}
+
+@media (max-width: 1064px) {
+  .greeter2__warp {
+    display: flex;
+    width: calc(100% - 64px);
+    margin: 0 32px;
+  }
+
+  .arca {
+    margin-top: -230px;
+    height: 300px;
+  }
+  .arca-white {
+    border-radius: 0 0 200px 200px;
+    height: 200px;
+  }
+}
+
+@media (max-width: 840px) {
+  #greeter2 {
+    background: linear-gradient(203deg, #f5f5f5, white);
+  }
+  .greeter2__warp {
+    height: auto;
+    flex-direction: column-reverse;
+  }
+
+  .greeter2__logo {
+    display: none;
+  }
+  .greeter2__image {
+    height: 440px;
+    width: 296px;
+    flex: 0 0 440px;
+  }
+
+  .greeter2__image img {
+    top: 60px;
+  }
+  .arca {
+    margin-top: -230px;
+    height: 300px;
+  }
+  .arca-white {
+    border-radius: 0 0 100px 100px;
+    height: 100px;
+  }
+
+  #layer-3 {
+    animation: move-mobile 8s 0.5s infinite ease-in-out;
+  }
+  #layer-2 {
+    animation: move-mobile 8s 0.3s infinite ease-in-out;
+  }
+  #layer-1 {
+    animation: move-mobile 8s infinite ease-in-out;
+  }
+
+  .greeter2__text {
+    padding: 20px 0 20px;
+  }
+  .greeter2__text h1 {
+    font-size: 22px;
+    line-height: 1.2;
+    font-weight: 900;
+  }
+  .arca {
+    margin-top: -73px;
+    height: 100px;
+  }
+  .greeter2__text p {
+    color: #333;
+    font-size: 16px;
+    font-weight: normal;
+  }
+
+  .button_strok {
+    display: none;
+  }
+}
+
+
+@keyframes move {
+  from,
+  to {
+    top: 100px;
+  }
+  25%,
+  75% {
+    top: 95px;
+  }
+  50% {
+    top: 105px;
+  }
+}
+@keyframes move-mobile {
+  from,
+  to {
+    top: 60px;
+  }
+  25%,
+  75% {
+    top: 55px;
+  }
+  50% {
+    top: 65px;
+  }
+}
+
+
+.cart-form__container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cart-form__valid .cart-form__label {
+  color: #050;
+}
+.cart-form__valid input {
+  color: #050;
+}
+.cart-form__invalid .cart-form__label {
+  color: #dd2958;
+}
+.cart-form__invalid input {
+  color: #a00;
+}
+
+.cart-form__form-item {
+  border-radius: 10px;
+  border: 1px solid #f0f0f0;
+  margin-bottom: 25px;
+  position: relative;
+  padding: 5px 8px;
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.cart-form__label {
+  color: #888;
+  background: #fff;
+  padding: 0 10px;
+  font-size: 11px;
+  font-family: "Montserrat";
+  position: absolute;
+  z-index: 2;
+  left: 23px;
+  top: -6px;
+}
+.cart-form__form-item textarea {
+  width: 100%;
+  box-sizing: border-box;
+  height: 50px;
+  padding: 20px;
+  border: none;
+  resize: vertical;
+  font-size: 16px;
+}
+.cart-form__form-item textarea:focus {
+  outline: none;
+  background: #f6f6f6;
+}
+.cart-form__form-item input {
+  padding: 10px;
+  box-sizing: border-box;
+  border: none;
+}
+
+.cart-form__form-item input[type="text"] {
+  width: 100%;
+}
+.cart-form__form-item input[type="radio"] {
+  height: 30px;
+}
+.cart-form__form-item label {
+  font-size: 14px;
+  color: #333;
+  font-family: "Montserrat";
+  display: block;
+}
+
+.cart-form__action {
+  display: flex;
+  gap: 50px;
+  align-items: center;
+}
+
+.cart-form__total {
+  font: normal normal normal 41px/22px "Montserrat";
+  color: #dd2958;
+}

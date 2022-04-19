@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, OnDestroy } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -37,6 +37,10 @@ import { BytesPipe } from './business/bytes.pipe';
 import { ModalComponent } from './modal/modal.component';
 import { AidBoxComponent } from './blocks/boxing/aid-box/aid-box.component';
 import { ProcessComponent } from './blocks/process/process.component';
+import { GreeterStaticComponent } from './blocks/greeter-static/greeter-static.component';
+import { ServerProductService } from './business/serverProduct.service'; 
+import { ClientProductService } from './business/clientProduct.service';
+import { ProductService } from './business';
 
 @NgModule({
   imports: [
@@ -75,17 +79,28 @@ import { ProcessComponent } from './blocks/process/process.component';
     ModalComponent,
     AidBoxComponent,
     ProcessComponent,
+    GreeterStaticComponent,
   ],
+  providers: [{
+    provide: ProductService, 
+    useClass:  typeof window != "object" ? ServerProductService : ClientProductService 
+  }],
   bootstrap: [AppComponent],
 })
-export class AppModule {
+export class AppModule implements OnDestroy {
+  private platform; 
   constructor(
     @Inject(PLATFORM_ID) private platformId: object,
     @Inject(APP_ID) private appId: string
-  ) {  
-    const platform = isPlatformBrowser(platformId)
+  ) {   
+    this.platform = isPlatformBrowser(platformId)
       ? 'in the browser'
       : 'on the server';
-    console.log(`Running ${platform} with appId=${appId}`);
+    console.log(`Running ${this.platform} with appId=${appId}`);
+    console.time("AppModule");
+  }
+  ngOnDestroy(): void {
+    console.log(`End ${this.platform} with appId=${this.appId}`);
+    console.timeEnd("AppModule");
   }
 }

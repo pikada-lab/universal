@@ -2,13 +2,12 @@ import {
   AfterViewInit,
   Component,
   EventEmitter,
-  OnDestroy,
+  Inject,
   OnInit,
 } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { NavigationEnd, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { ConfigService } from 'src/app/business/config.service';
+import { debounceTime, timeout } from 'rxjs';
+import { ProductService } from 'src/app/business'; 
 import { bricks } from './bricks';
 
 @Component({
@@ -19,14 +18,13 @@ import { bricks } from './bricks';
 export class ClientsComponent implements OnInit, AfterViewInit {
   company?: any[];
   constructor(
-    private config: ConfigService,
-    private router: Router,
+    @Inject(ProductService) private productService: ProductService,
     private meta: Meta,
     private titleService: Title
   ) {}
 
   instance: any;
-  emmiter: any;
+  emmiter = new EventEmitter();
 
   create = new EventEmitter<any>();
   isAfterViewInit = false;
@@ -37,27 +35,23 @@ export class ClientsComponent implements OnInit, AfterViewInit {
       content: 'С нами работают крупные компании',
     });
 
-    this.create.subscribe((r) => {
-      console.log('INIT');
+    this.create.pipe(debounceTime(100)).subscribe((r) => {
       if (this.company && this.isAfterViewInit) {
-        console.log('INIT 2');
-        setTimeout(() => {
-          this.initSlider();
-          this.resize({});
-        }, 1);
+        this.initSlider();
+        this.resize({});
       }
     });
     this.create.emit();
-    this.config.getCompany().subscribe((r) => {
+    this.productService.getCompany().subscribe((r) => {
       this.company = r;
       this.create.emit();
     });
   }
   resize(ev: any) {
     if (this.instance) {
-      this.emmiter();
+      this.emmiter.emit();
     }
-    console.log('MISS UPDATED SIZE BECAUSE LOADED IMAGE', event);
+    console.log('MISS UPDATED SIZE BECAUSE LOADED IMAGE', ev);
   }
 
   ngAfterViewInit(): void {
@@ -82,19 +76,16 @@ export class ClientsComponent implements OnInit, AfterViewInit {
     this.instance.pack();
     this.instance.resize(true);
     let timer: any = 0;
-    this.emmiter = () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        let loader = document.getElementById('load-place');
-        let container = document.getElementById('load-waiter');
-        if (!loader || !container) return;
-        loader.style.display = 'none';
-        container.className = Array.from(container.classList)
-          .filter((r) => r != 'loading')
-          .join(' ');
-        this.instance.pack();
-        console.log('UPDATED SIZE BECAUSE LOADED IMAGE');
-      }, 300);
-    };
+    this.emmiter.pipe(debounceTime(300)).subscribe(() => {
+      let loader = document.getElementById('load-place');
+      let container = document.getElementById('load-waiter');
+      if (!loader || !container) return;
+      loader.style.display = 'none';
+      container.className = Array.from(container.classList)
+        .filter((r) => r != 'loading')
+        .join(' ');
+      this.instance.pack();
+      console.log('UPDATED SIZE BECAUSE LOADED IMAGE');
+    });
   }
 }

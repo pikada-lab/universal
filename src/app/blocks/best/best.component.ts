@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { DomSanitizer } from '@angular/platform-browser';
-import { ProductService } from 'src/app/business/product.service';
+import { Component, Inject, Input, OnInit } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser'; 
+import { ProductService } from 'src/app/business';
 import { Products } from 'src/app/models';
 
 @Component({
@@ -14,7 +14,7 @@ export class BestComponent implements OnInit {
   public product!: Products;
   img: any;
 
-  constructor(private productService: ProductService, private ssd: DomSanitizer) { }
+  constructor(@Inject(ProductService) private productService: ProductService, private ssd: DomSanitizer) { }
 
   ngOnInit(): void {
     this.productService.getProductById(52846).subscribe(r => {

@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  host: 'http://new.aptechki.ru/'
+  host: 'https://aptechki.ru/',
+  imageHost: 'https://aptechki.ru/',
 };

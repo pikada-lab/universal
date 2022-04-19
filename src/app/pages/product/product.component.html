@@ -1,4 +1,10 @@
-<section class="product-header" *ngIf="product">
+<div  *ngIf="!product && !loading" style="padding: 150px 50px 50px">
+  <div class="empty">Товар не найден</div>
+</div>
+<div  *ngIf="loading" style="padding: 150px 50px 50px">
+  <div class="empty">Загрузка</div>
+</div>
+<section class="product-header" *ngIf="product && !loading">
   <div class="warp product-header__warp">
     <div class="product-header__image">
       <img [src]="img" alt="Product" />
@@ -26,7 +32,7 @@
 </section>
 <!-- end product-header -->
 
-<div class="product__container" *ngIf="product">
+<div class="product__container" *ngIf="product  && !loading">
   <div class="warp product__warp">
     <div class="product__price-line">
       <!-- counter -->
@@ -38,10 +44,21 @@
         [isOnCart]="isOnCart"
       ></app-counter>
       <!-- end counter -->
-      <div class="product__price" *ngIf="product.price">
-        {{ product.price * count | numberFor3: 2 }} ₽
+      <div class="product__price" *ngIf="product.price && !currentCase">
+        {{ (product.price * count) | numberFor3: 2 }} ₽
+      </div>
+      <div class="product__price" *ngIf="product.price && currentCase">
+        {{ ((product.price + currentCase.price) * count) | numberFor3: 2 }} ₽
       </div>
     </div>
+
+
+    <div class="cart-item__total">
+      <span *ngIf="product.price > 0"> Укладка: {{ product.price | numberFor3:2 }}₽.</span> 
+      <span *ngIf="currentCase && currentCase.price > 0"> Бокс: {{ currentCase.price | numberFor3:2 }}₽</span> 
+      <span *ngIf="currentCase && currentCase.price > 0 && product.price > 0"> = {{ (currentCase.price + product.price ) | numberFor3:2}}₽</span> 
+    </div>
+
     <!-- start boxing -->
     <ng-container *ngIf="product">
       <app-boxing
@@ -72,7 +89,7 @@
     </div>
   </div>
 </div>
-<section class="warp" id="custom-order">
+<section class="warp" id="custom-order" *ngIf="product  && !loading">
   <div class="product__form">
     <h2 class="product__content-title">Заказать Аптечку с вашим перечнем</h2>
     <p class="product__text">
@@ -97,7 +114,7 @@
       ></textarea>
     </div>
     <div class="product__form-item">
-      <div class="product__label">Ваш перечень файлом</div>
+      <div class="product__label">Прикрепить перечень файлом</div>
       <input type="file" #file multiple />
     </div>
 

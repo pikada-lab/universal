@@ -11,7 +11,7 @@
         [id]="'box_' + case.id"
         [value]="case.id"
         [(ngModel)]="caseId"
-        (change)="saveCase.emit(caseId)"
+        (change)="saveCase.emit(caseId);"
       />
     </div>
     <div class="aid-box__text">{{ case.title }}<br/><small>{{case.subtitle}}</small></div>

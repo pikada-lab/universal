@@ -7,38 +7,21 @@ import { extname, join } from 'path';
 var path = require('path');
 import { AppServerModule } from './src/main.server';
 import { APP_BASE_HREF } from '@angular/common';
-import {
-  createReadStream,
-  createWriteStream,
-  existsSync,
-  mkdirSync,
-  readFile,
-  statSync,
-} from 'fs';
-import { ProductAdapter } from 'adapters/ProductAdapter';
+import { createReadStream, existsSync, mkdirSync, statSync } from 'fs';
+import { ProductAdapter, UniversalProduct } from 'adapters/ProductAdapter';
 import { FileRepository } from 'adapters/FileRepository';
 import { Order } from './adapters/Order';
-const fileUpload = require('express-fileupload');
-const mysql = require('mysql2');
+import { EOL } from 'os';
+import { environment } from 'src/environments/environment';
+import { Category, CategoryLike } from 'adapters/Category';
+import { Yandex } from 'adapters/Yandex';
+import { YandexRss } from 'adapters/YandexRss';
+import { ProductRepository } from 'adapters/ProductRepository';
+import { CompanyRepository } from 'adapters/CompanyRepository';
+import { CompanyQuery } from 'adapters/CompanyQuery';
+const fileUpload = require('express-fileupload'); 
 
-function getAllCompany() {
-  const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'Saq33rrT',
-    database: 'cito3_aptechki',
-  });
-
-  return new Promise<any[]>((res, rej) => {
-    connection.query(
-      'SELECT * FROM `company` ORDER BY `company`.`sort` DESC',
-      (err: any, results: any, fields: any) => {
-        connection.destroy();
-        res(results);
-      }
-    );
-  });
-}
+ 
 const uploadPath = '/var/www/aptechki.ru/assets/customerFiles/';
 const LIMIT_FILE = 8 * 1024 * 1024;
 // The Express app is exported so that it can be used by serverless Functions.
@@ -65,30 +48,90 @@ export function app() {
 
   server.set('view engine', 'html');
   server.set('views', distFolder);
-  let company: any[] = [];
-  getAllCompany().then((r) => {
-    company = r;
-  });
-  setInterval((r) => {
-    getAllCompany().then((r) => {
-      company = r;
-    });
-  }, 60 * 60 * 1000);
+   
+  // setInterval((r) => {
+  //   getAllCompany().then((r) => {
+  //     company = r;
+  //   });
+  // }, 60 * 60 * 1000);
 
   // INTEGRATION
-  let fileRepository = new FileRepository(
+  const fileRepository = new FileRepository(
     '/var/www/aptechki.ru/assets/fileRepository.log'
   );
-  let http = new ICQHttpClient();
+  const http = new ICQHttpClient();
+    const companyPromise = CompanyQuery({
+      host: 'localhost',
+      user: 'root',
+      password: 'Saq33rrT',
+      database: 'cito3_aptechki',
+    });
+  const companyRepository = new CompanyRepository();
+  const productRepository = new ProductRepository(http);
+
+  productRepository.init().then(() => {
+    console.log('INIT ProductRepository / (first)');
+  });
+  companyPromise.then((clients) => {
+    console.log("INIT CompanyRepository / (first) " + clients.length);
+    companyRepository.setCompany(clients);
+  });
+  server.get('/robots.txt', async (req: any, res: any) => {
+    let file = 'User-agent: *' + EOL;
+    file += 'Allow: /' + EOL;
+    file += 'Disallow: /cart' + EOL;
+    file += `Sitemap: ${environment.host}sitemap.xml`;
+    res.setHeader('Content-Type', 'plain/text');
+    res.send(file);
+  });
+
+  function setPage(url: string, lm: string) {
+    return `<url>
+          <loc>${url}</loc>
+          <lastmod>${lm}</lastmod>
+          <changefreq>monthly</changefreq>
+          <priority>0.8</priority>
+        </url>${EOL}`;
+  }
+  server.get('/sitemap.xml', async (req: any, res: any) => {
+    console.log(environment.host);
+    let file = '<?xml version="1.0" encoding="UTF-8"?>' + EOL;
+    file +=
+      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + EOL;
+    let products = await getAllProducts();
+    for (let i of products) {
+      if (i.exclude) continue;
+      file += setPage(
+        `${environment.host}products/${i.id}`,
+        new Date(i.updatedAt).toJSON().slice(0, 10)
+      );
+    }
+    file += setPage(`${environment.host}contacts`, '2022-01-01');
+    file += setPage(`${environment.host}clients`, '2022-01-01');
+    file += setPage(`${environment.host}products`, '2022-01-01');
+    file += setPage(`${environment.host}home`, '2022-01-01');
+    file += '</urlset>';
+    res.setHeader('Content-Type', 'application/xml');
+    res.send(file);
+  });
+  server.get('/prices.yml', async (req: any, res: any) => {
+    let categories = await getCategoryAid();
+    let products = await getAllProducts();
+    let cases = await getProductByCategory(377);
+    console.log(cases);
+    const file = new Yandex(products, cases, categories).build();
+    res.setHeader('Content-Type', 'application/xml');
+    res.send(file);
+  });
 
   async function getProductByCategory(id: number) {
-    let result = await http.get<any>(
+    let result = await http.get<UniversalProduct[]>(
       'http://127.0.0.1:9001/v1/product/category/' + id,
       {},
       { 'user-agent': 'aptechki.ru' }
     );
     if (!result) result = [];
-    return result;
+    return result.map((r) => new UniversalProduct(r.id).initState(r));
   }
 
   async function getCategoryAid() {
@@ -97,14 +140,13 @@ export function app() {
       {},
       { 'user-agent': 'aptechki.ru' }
     );
-    if (categories.status != 0) {
-      console.log(categories.status);
+    if (categories.status != 0) { 
       throw new Error('Временно не работает');
     }
     let aptechkiCategory = [];
     for (let i of categories.response) {
       if (i.parent == 374) {
-        aptechkiCategory.push(i);
+        aptechkiCategory.push(new Category(i));
       }
     }
     return aptechkiCategory;
@@ -116,11 +158,10 @@ export function app() {
       {},
       { 'user-agent': 'aptechki.ru' }
     );
-    if (categoriy.status != 0) {
-      console.log(categoriy.status);
+    if (categoriy.status != 0) { 
       throw new Error('Временно не работает');
     }
-    return categoriy.response;
+    return new Category(categoriy.response);
   }
 
   async function getAllProducts() {
@@ -132,10 +173,9 @@ export function app() {
     }
     return product;
   }
-  server.get('/api/company/', async (req: any, res: any) => {
-    let product = await getAllProducts();
+  server.get('/api/company/', async (req: any, res: any) => { 
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(company));
+    res.send(JSON.stringify(companyRepository.getAllCompany()));
   });
   server.get('/api/product/popular', async (req: any, res: any) => {
     let product = await getAllProducts();
@@ -150,10 +190,19 @@ export function app() {
       )
     );
   });
+  
+  server.get('/v2/product/popular', async (req: any, res: any) => {
+    let product = productRepository.getPopular();
+    res.setHeader('Content-Type', 'application/json');
+    res.send(
+      JSON.stringify(
+        product.map((r) => ProductAdapter(r))
+      )
+    );
+  });
 
   server.get('/api/product/search', async (req: any, res: any) => {
     let query = req.query['q'];
-    console.log(query);
     let reg = new RegExp('(' + query + ')', 'i');
     let product = await getAllProducts();
     res.setHeader('Content-Type', 'application/json');
@@ -185,6 +234,37 @@ export function app() {
     }
   });
 
+  server.get('/v2/category/', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    try {
+      if (!req?.query?.['id']) {
+        let result = productRepository.getAllCategories();
+        res.send(JSON.stringify(result));
+      } else {
+        const id = +req.query['id'];
+        let result = productRepository.getCategoryAidByID(id);
+        res.send(JSON.stringify(result));
+      }
+    } catch (ex: any) {
+      res.status(400).send(ex.message);
+    }
+  });
+
+  server.get('/rss', async (req: any, res: any) => {
+    try {
+      let productUniversal = await getAllProducts();
+      const products = productUniversal
+        .filter((r: UniversalProduct) => !r.exclude)
+        .map((r) => ProductAdapter(r));
+      let rss = new YandexRss(products);
+
+      res.setHeader('Content-Type', 'application/xml');
+      res.send(rss.body());
+    } catch (ex: any) {
+      res.status(400).send(ex.message);
+    }
+  });
+
   server.get('/api/category/:id', async (req: any, res: any) => {
     const id = req.params.id;
     let result = await http.get<any>(
@@ -194,7 +274,25 @@ export function app() {
     );
     if (!result) result = [];
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(result.map((r: any) => ProductAdapter(r))));
+    res.send(
+      JSON.stringify(
+        result.map((r: any) =>
+          ProductAdapter(new UniversalProduct(r.id).initState(r))
+        )
+      )
+    );
+  });
+  server.get('/v2/category/:id', async (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    try {
+      const id = +req.params.id;
+      let result = productRepository.getProductByCategory(id);
+      res.send(
+        JSON.stringify(result.map((r: UniversalProduct) => ProductAdapter(r)))
+      );
+    } catch (ex: any) {
+      res.status(400).send(ex.message);
+    }
   });
 
   server.get('/api/product/:id', async (req: any, res: any) => {
@@ -206,7 +304,27 @@ export function app() {
     );
 
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(ProductAdapter(result[0])));
+    if (result.length === 0) {
+      res.status(400).send('Нет товара с номером ' + id);
+    } else
+      res.send(
+        JSON.stringify(
+          ProductAdapter(
+            new UniversalProduct(result[0].id).initState(result[0])
+          )
+        )
+      );
+  });
+
+  server.get<{ id: number }>('/v2/product/:id', async (req, res) => {
+    try {
+      const id = +req.params.id;
+      let result = productRepository.getProductByID(id)!;
+      res.setHeader('Content-Type', 'application/json');
+      res.send(JSON.stringify(ProductAdapter(result)));
+    } catch (ex: any) {
+      res.status(400).send(ex.message);
+    }
   });
 
   async function processUploadFile(f: any) {
@@ -226,7 +344,6 @@ export function app() {
       };
       f.mv(itemFile.path, (err: any) => {
         if (err) {
-          console.log(err.errno);
           rej(err);
         } else {
           fileRepository.add(itemFile);
@@ -256,7 +373,6 @@ export function app() {
             res.send(JSON.stringify([fileRef]));
           })
           .catch((err) => {
-            console.log(err);
             res.status(400).send('Some problem.');
           });
       }
@@ -285,14 +401,12 @@ export function app() {
       );
       file.pipe(res);
     } catch (ex) {
-      console.log(ex);
       res.status(400).send('Some problem.');
     }
   });
   server.get('/api/pdf/:id', async (req: any, res: any) => {
     try {
       const id = req.params.id;
-
       let pdf = await http.getFile(
         'http://127.0.0.1:9031/api/pdf/' + id,
         {},
@@ -307,7 +421,6 @@ export function app() {
       );
       res.send(pdf);
     } catch (ex) {
-      console.log(ex);
       res.status(400).send('Some problem.');
     }
   });
@@ -354,7 +467,11 @@ export function app() {
   server.get('*', (req: any, res: any) => {
     res.render(indexHtml, {
       req,
-      providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }],
+      providers: [
+        { provide: APP_BASE_HREF, useValue: req.baseUrl },
+        { provide: "ProductRepository", useValue: productRepository },
+        { provide: "CompanyRepository", useValue: companyRepository }
+      ],
     });
   });
 
@@ -367,7 +484,7 @@ function run() {
   // Start up the Node server
   const server = app();
   server.listen(port, () => {
-    console.log(`Node Express server listening on http://localhost:${port}`);
+    console.log(`Node Express server listening on ${environment.host}:${port}`);
   });
 }
 

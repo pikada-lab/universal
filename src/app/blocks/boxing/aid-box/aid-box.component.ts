@@ -10,10 +10,13 @@ import { Products } from 'src/app/models';
 export class AidBoxComponent implements OnInit {
 
   @Input()
-  case!: Products;
-
+  case!: Products; 
+  
   @Input()
   caseId!: number;
+
+  @Output()
+  caseIdChange = new EventEmitter<number>();
 
   @Output()
   saveCase = new EventEmitter<number>();

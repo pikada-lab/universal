@@ -1,0 +1,119 @@
+
+    <section id="greeter2">
+      <div class="warp greeter2__warp">
+        <div class="greeter2__text">
+          <div class="greeter2__logo">
+            <img src="/assets/Logo.apt3@2x.png" />
+          </div>
+          <h1>
+            Укомплектуем аптечку<br />
+            по вашему заказу
+          </h1>
+          <p>
+            Мы поставляем аптечки, соответствующие актуальным приказам по России уже более 10 лет. С доставкой в офис, на склад и производство, в том числе укладку неотложной помощи по приказу МЗ РФ номер 1183н, Антишок, посиндомные. Состав аптечек и наличае товара уточняйте у менеджера.
+          </p>
+
+          <div class="list-button greeter__list-button">
+            <div class="button button_fill" (click)="open.emit(true)">Заказать звонок</div>
+            <div class="button button_strok" (click)="openRequest.emit(true)">Отпраивть запрос</div>
+          </div>
+        </div>
+        <div class="greeter2__image" (mousemove)="showLayer($event)" (mouseleave)="showLayers()">
+          <img src="/assets/home/1.png" />
+          <img src="/assets/home/2.png" id="layer-3"   />
+          <img src="/assets/home/3.png" id="layer-2"  />
+          <img src="/assets/home/4.png" id="layer-1"   />
+        </div>
+      </div>
+      <div class="arca">
+        <div class="arca-white"></div>
+      </div>
+    </section>
+
+
+<!-- Форма отправки звонка -->
+<app-modal [open]="open" [title]="'Заказать звонок'" [buttons]="callButtons">
+  <h2>Заказать звонок</h2>
+  <div class="cart-form__container">
+    <div 
+    [class]="
+      'cart-form__form-item ' + (isValidName ? 'cart-form__valid' : 'cart-form__invalid')
+    ">
+      <div class="cart-form__label">ФИО</div>
+      <input
+        type="text"
+        maxlength="32"
+        [(ngModel)]="cart.name"
+        (keyup)="validName()"
+        (change)="save()"
+      />
+    </div>
+    <div
+      [class]="
+        'cart-form__form-item ' + (isValidPhone ? 'cart-form__valid' : 'cart-form__invalid')
+      "
+    >
+      <div class="cart-form__label">Телефон</div>
+      <input
+        type="text"
+        maxlength="32"
+        [(ngModel)]="cart.phone"
+        (keyup)="validPhone()"
+        (change)="save()"
+      />
+    </div>
+  </div>
+</app-modal>
+
+<!-- форма отправки запроса -->
+<app-modal
+  [open]="openRequest"
+  [title]="'Отправить запрос'"
+  [buttons]="requestButtons"
+>
+  <h2>Отправить запрос</h2>
+  <div class="cart-form__container">
+    <div 
+    [class]="
+      'cart-form__form-item ' + (isValidName ? 'cart-form__valid' : 'cart-form__invalid')
+    ">
+      <div class="cart-form__label">ФИО</div>
+      <input
+        type="text"
+        maxlength="32"
+        [(ngModel)]="cart.name"
+        (keyup)="validName()"
+        (change)="save()"
+      />
+    </div>
+    <div
+      [class]="
+        'cart-form__form-item ' + (isValidPhone ? 'cart-form__valid' : 'cart-form__invalid') 
+      "
+    >
+      <div class="cart-form__label">Телефон</div>
+      <input
+        type="text"
+        [maxLength]="32"
+        [(ngModel)]="cart.phone"
+        (keyup)="validPhone()"
+        (change)="save()"
+      />
+    </div>
+
+    <div
+      [class]="
+        'cart-form__form-item ' + (isValidMail ? 'cart-form__valid' : 'cart-form__invalid')
+      "
+    >
+      <div class="cart-form__label">Почта</div>
+      <input
+        type="text"
+        [maxLength]="64"
+        [(ngModel)]="cart.mail"
+        (keyup)="validMail()"
+        (change)="save()"
+      />
+    </div>
+  </div>
+</app-modal>

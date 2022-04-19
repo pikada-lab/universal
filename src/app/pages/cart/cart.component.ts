@@ -11,6 +11,8 @@ import { CartService } from 'src/app/business/cart.service';
 import { Cart, CartItem } from 'src/app/models';
 import { ToastService } from 'src/app/toast.service';
 
+declare const ym: any;
+
 @Component({
   selector: 'app-cart-page',
   templateUrl: './cart.component.html',
@@ -48,7 +50,9 @@ export class CartPageComponent implements OnInit {
     this.savePipe.pipe(debounceTime(1000)).subscribe(() => {
       this.cartService.save();
     });
-    window.document.body.scrollTop = 0; 
+    if(typeof window === 'object') {
+         window.document.body.scrollTop = 0; 
+    }
   }
 
   calc() {
@@ -144,12 +148,14 @@ export class CartPageComponent implements OnInit {
     this.isProcess = true;
     this.cartService.order().subscribe({
       next: (r: any) => {
-        console.log(r);
         this.id = +r.response;
         this.cartService.cleanItems();
         this.items = this.cartService.getAll();
         this.openForm.emit(true);
         this.isProcess = false;
+        if (typeof ym != 'undefined') {
+          ym(87712774,'reachGoal','order')
+        }
       },
       error: (err) => {
         this.isProcess = false;

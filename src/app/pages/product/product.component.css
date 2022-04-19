@@ -133,6 +133,12 @@
   color: #888;
   font-size: 12px;
 }
+
+.cart-item__total {
+  font: normal normal normal 13px/22px Montserrat;
+  color: #C6C6C6;
+}
+
 @media (max-width: 824px) {
   .product__price-line {
     gap: 10px;

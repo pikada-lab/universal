@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, EventEmitter, OnInit } from '@angular/core';
-import { ConfigService } from 'src/app/business/config.service';
+import { AfterViewInit, Component, EventEmitter, Inject, OnInit } from '@angular/core';
+import { ProductService } from 'src/app/business';
 import { initSlider } from './slider';
 
 @Component({
@@ -11,7 +11,7 @@ export class ClientsInsertComponent implements OnInit, AfterViewInit {
   company?: any[];
   isAfterViewInit = false;
   create = new EventEmitter();
-  constructor(private config: ConfigService) {}
+  constructor(@Inject(ProductService) private productService: ProductService) {}
 
   ngAfterViewInit(): void {
     this.isAfterViewInit = true;
@@ -19,7 +19,7 @@ export class ClientsInsertComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.config.getCompany().subscribe((r) => {
+    this.productService.getCompany().subscribe((r) => {
       this.company = r.slice(0, 10); 
       this.create.emit();
     });

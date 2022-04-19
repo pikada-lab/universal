@@ -1,10 +1,11 @@
 import { Cart, CartItem } from 'src/app/models';
 import ICQ from 'icq-bot';
-import { ProductAdapter } from './ProductAdapter';
+import { ProductAdapter, UniversalProduct } from './ProductAdapter';
 import { ICQHttpClient } from 'HttpClient';
 import { UploadedFile } from 'src/app/business/cart.service';
 import { extname } from 'path'; 
 import { Connection, createConnection, OkPacket } from 'mysql2/promise';
+import { environment } from 'src/environments/environment';
  
 
 async function openConnection() {
@@ -36,7 +37,6 @@ async function saveOrder(connection: Connection, cart: Cart): Promise<number> {
        `(NULL, ?, ?, ?, ?, ?, 0, NOW(), ?, ?, ?)`,
        [cart.name, cart.phone, cart.mail, cart.address ?? '', cart.comment ?? '',   cart.deliveryType,  cart.paymentType, cart.customDescriptionFile.join()] ); 
        cart.id = results.insertId;
-  
   return results.insertId; 
 }
 
@@ -47,19 +47,18 @@ async function saveOrderItem(connection: Connection, order_id: number, item: Car
     "INSERT INTO `orderv2_items`(`id`, `product_id`, `price`, `boxing_id`, `priceCase`, `qtty`, `special`, `customDescription`, `customDescriptionFile`, `order_id`, `STATUS`) VALUES " +
     `(NULL, ? , ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [item.productId, item.price, item.caseId, item.priceCase, item.qtty, item.special, item.customDescription ?? '', JSON.stringify(item.customDescriptionFile), order_id, "CREATED"]);
-    console.log(item);
     return results.insertId;
   }
 
 export class Order {
   private bot: any;
   private http = new ICQHttpClient();
-  private recipient = '@dzhigurda';
+  private recipient = '685684342@chat.agent';
   private cart: Cart;
   private items: CartItem[];
 
   constructor(body: any, private uploadPath: string) {
-    this.bot = new ICQ.Bot('001.1188664136.0582363194:751224051');
+    this.bot = new ICQ.Bot('001.0232927109.1999608478:751212693');
     this.cart = body.cart;
     this.items = body.items ?? [];
   }
@@ -116,7 +115,7 @@ export class Order {
         new ICQ.Button(
           'Скачать ' + file.name,
           'No metter',
-          'http://localhost:4201/api/files/' + file.id
+          `${environment.host}/api/files/${file.id}`
         )
     );
     if (buttons.length == 0) return undefined;
@@ -135,8 +134,7 @@ export class Order {
           button,
           { mode: 'MarkdownV2' }
         )
-        .then((r: any) => {
-          console.log(r);
+        .then((r: any) => { 
           res(r);
         });
     });
@@ -146,8 +144,7 @@ export class Order {
       let fileLink = this.uploadPath + file.id + extname(file.name);
       this.bot
         .sendFile(this.recipient, '', fileLink, file.name)
-        .then((r: any) => {
-          console.log(r);
+        .then((r: any) => { 
           res(r);
         });
     });
@@ -159,9 +156,8 @@ export class Order {
       'http://127.0.0.1:9001/v1/product/' + id,
       {},
       { 'user-agent': 'aptechki.ru' }
-    );
-    console.log(id, caseRef);
-    return ProductAdapter(caseRef[0]);
+    ); 
+    return ProductAdapter(new UniversalProduct(caseRef[0].id).initState(caseRef[0]));
   }
 
   private async sendItem(item: CartItem) {

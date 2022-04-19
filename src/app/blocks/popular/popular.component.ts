@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { ProductService } from 'src/app/business/product.service';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core'; 
+import { ProductService } from 'src/app/business';
 import { Products } from 'src/app/models';
 
 @Component({
@@ -7,18 +7,21 @@ import { Products } from 'src/app/models';
   templateUrl: './popular.component.html',
   styleUrls: ['./popular.component.css']
 })
-export class PopularComponent implements OnInit {
+export class PopularComponent implements OnInit , OnDestroy {
   products!:  Products[];
   isSearch = false;
   productsResult?: Products[];
-  constructor(private productService: ProductService) { }
+  constructor(@Inject(ProductService) private productService: ProductService) { }
 
   ngOnInit(): void {
+    console.time("PopularComponent")
     this.productService.getPopular().subscribe(r => {
         this.products = r;
     })
   }
-
+  ngOnDestroy(): void { 
+    console.timeEnd("PopularComponent");
+  }
   openSearchResult(res: Products[]) {
     this.isSearch = true;
     this.productsResult = res;

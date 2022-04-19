@@ -1,9 +1,16 @@
-import { HttpClient, HttpEvent, HttpRequest, HttpResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpEvent,
+  HttpRequest,
+  HttpResponse,
+} from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { firstValueFrom, NEVER, of, switchMap } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { Cart, CartItem, Products } from '../models';
 import { ToastService } from '../toast.service';
+
+declare const ym: any;
 
 export interface UploadedFile {
   id: string;
@@ -26,8 +33,6 @@ export interface LoadedValue {
   providedIn: 'root',
 })
 export class CartService {
-
-
   process: LoadedValue[] = [];
 
   private items: CartItem[] = [];
@@ -39,7 +44,6 @@ export class CartService {
     private t: ToastService
   ) {
     this.host = environment.host;
-    console.log('Cart', platformId);
     if (platformId == 'browser') {
       this.load();
       setInterval(() => {
@@ -119,6 +123,9 @@ export class CartService {
     );
     this.items.push(item);
     this.save();
+    if (typeof ym != 'undefined') {
+      ym(87712774, 'reachGoal', 'add_product');
+    }
     return item;
   }
 
@@ -178,35 +185,34 @@ export class CartService {
       const process: LoadedValue = {
         id: id,
         done: false,
-        name: "Загрузка " +customDescriptionFile.length + " файлов/а."
+        name: 'Загрузка ' + customDescriptionFile.length + ' файлов/а.',
       };
-      this.addProcess(process)
+      this.addProcess(process);
       this.http
         .request(request)
         .pipe(
-          switchMap((value: HttpEvent<any>) => { 
-            if(value instanceof HttpResponse) { 
-              console.log(id, "ENDED");
+          switchMap((value: HttpEvent<any>) => {
+            if (value instanceof HttpResponse) {
               this.removeProcess(id);
               return of(value.body);
             }
-            if(value.type === 0) {
-              process.type = value.type; 
+            if (value.type === 0) {
+              process.type = value.type;
               return NEVER;
-            }            
-            if(value.type === 1) {
-              if(process.done) { 
+            }
+            if (value.type === 1) {
+              if (process.done) {
                 this.removeProcess(id);
-                throw new Error(process.name + " отменено");
+                throw new Error(process.name + ' отменено');
               }
-              if(value.total) { 
+              if (value.total) {
                 process.total = value.total;
                 process.type = value.type;
-                process.loaded = value.loaded; 
+                process.loaded = value.loaded;
               }
               return NEVER;
-            } 
-            if(value.type === 3) { 
+            }
+            if (value.type === 3) {
               return NEVER;
             }
             return NEVER;
@@ -214,9 +220,9 @@ export class CartService {
         )
         .subscribe({
           next: (v) => resolve(v),
-          error: (e) => { 
+          error: (e) => {
             this.removeProcess(id);
-            reject(e);  
+            reject(e);
           },
           complete: () => {
             this.removeProcess(id);
@@ -307,7 +313,10 @@ export class CartService {
       cart: this.cart,
       items: [],
     };
-    return this.http.post<{response: number}>(this.host + '/api/order/request', ref);
+    return this.http.post<{ response: number }>(
+      this.host + '/api/order/request',
+      ref
+    );
   }
 
   sendCallRequest() {
@@ -315,31 +324,33 @@ export class CartService {
       cart: this.cart,
       items: [],
     };
-    return this.http.post<{response: number}>(this.host + '/api/order/call', ref);
+    return this.http.post<{ response: number }>(
+      this.host + '/api/order/call',
+      ref
+    );
   }
-
 
   addProcess(pr: LoadedValue) {
     return this.process.push(pr);
   }
 
   removeProcess(id: number) {
-    let index = this.process.findIndex(r => r.id === id); 
-    if(~index) {
+    let index = this.process.findIndex((r) => r.id === id);
+    if (~index) {
       this.process.splice(index, 1);
     }
   }
   getProcessById(id: number) {
-    let index = this.process.findIndex(r => r.id === id);
-    if(~index) {
-     return this.process[index];
+    let index = this.process.findIndex((r) => r.id === id);
+    if (~index) {
+      return this.process[index];
     }
     return null;
   }
 
   deleteProcess(id: number) {
     let proc = this.getProcessById(id);
-    if(!proc) return;
-    proc.done  = true
+    if (!proc) return;
+    proc.done = true;
   }
 }

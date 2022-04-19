@@ -24,15 +24,15 @@ export class FileRepository {
 
   ckeckTTL(ttl: number) {
     let current = Date.now();
-    console.log("[TTL]","try clean")
+    // console.log("[TTL]","try clean")
     for(let item of Array.from(this.files.values())) {
-      console.log("[TTL]", new Date(item.create_at + ttl), "<", new Date(current))
+      // console.log("[TTL]", new Date(item.create_at + ttl), "<", new Date(current))
       if(item.create_at + item.ttl < current) {
         try {
         this.delete(item.id);
-        console.log("[TTL]","Delete file", item.id, item.name);
+        // console.log("[TTL]","Delete file", item.id, item.name);
         } catch(ex: any) {
-          console.log("[TTL]",ex?.message)
+          // console.log("[TTL]",ex?.message)
         }
       }
     }
@@ -50,14 +50,15 @@ export class FileRepository {
     this.save();
   }
   delete(id: string) {
-    if (!this.files.has(id)) return console.log("No file");
+    if (!this.files.has(id)) 
+      return; /// console.log("No file");
     let file = this.files.get(id); 
     try {
       unlinkSync(file.path);
     } catch(ex: any) {
-      console.log(ex.message);
+      // console.log(ex.message);
     }
-    console.log("delete in db");
+    // console.log("delete in db");
     this.files.delete(file.id);
     this.save();
     return;

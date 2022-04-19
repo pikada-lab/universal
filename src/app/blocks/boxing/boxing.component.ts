@@ -7,6 +7,10 @@ import { Products } from 'src/app/models';
   styleUrls: ['./boxing.component.css']
 })
 export class BoxingComponent implements OnInit {
+
+  @Output()
+  caseIdChange = new EventEmitter<number>();
+
   @Input()
   caseId!: number;
 
@@ -21,11 +25,8 @@ export class BoxingComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log(this.product, this.cases);
+    
   }
-
-  saveCase() {
-
-  }
+ 
 
 }
