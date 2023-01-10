@@ -78,7 +78,7 @@ export function app() {
   const companyPromise = CompanyQuery({
     host: 'localhost',
     user: 'root',
-    password: 'Saq33rrT',
+    password: '*******',
     database: 'cito3_aptechki',
   });
   const companyRepository = new CompanyRepository();
