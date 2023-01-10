@@ -28,14 +28,16 @@ export class Products {
   exclude!: boolean;
 
   updateAt!: number;
-
+  keywords!: string;
   initState(product: UniversalProduct) {
-    if (!product?.id) console.log(product);
+    if (!product?.id) throw new Error("Карточка товара пуста");
     this.id = product.id;
     this.title = product.title;
     let splitText = product.description.split('\n');
     this.subtitle = splitText.shift() ?? '';
     this.text = splitText.join('\n') ?? '';
+
+    this.keywords = product.keywords;
     this.isNew = product.latest;
     this.isTheBest = product.theBest;
     this.price = product.regularPrice;
@@ -60,6 +62,7 @@ export class Products {
     this.id = product.id;
     this.title = product.title;
     this.subtitle = product.subtitle;
+    this.keywords = product.keywords;
     this.text = product.text;
     this.isNew = product.isNew;
     this.isTheBest = product.isTheBest;

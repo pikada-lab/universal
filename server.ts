@@ -7,7 +7,14 @@ import { extname, join } from 'path';
 var path = require('path');
 import { AppServerModule } from './src/main.server';
 import { APP_BASE_HREF } from '@angular/common';
-import { createReadStream, existsSync, mkdirSync, statSync } from 'fs';
+import {
+  accessSync,
+  createReadStream,
+  existsSync,
+  mkdirSync,
+  statSync,
+  writeFileSync,
+} from 'fs';
 import { ProductAdapter, UniversalProduct } from 'adapters/ProductAdapter';
 import { FileRepository } from 'adapters/FileRepository';
 import { Order } from './adapters/Order';
@@ -19,10 +26,26 @@ import { YandexRss } from 'adapters/YandexRss';
 import { ProductRepository } from 'adapters/ProductRepository';
 import { CompanyRepository } from 'adapters/CompanyRepository';
 import { CompanyQuery } from 'adapters/CompanyQuery';
-const fileUpload = require('express-fileupload'); 
+const fileUpload = require('express-fileupload');
 
- 
-const uploadPath = '/var/www/aptechki.ru/assets/customerFiles/';
+const ROOT_PATH = process.env['ROOT_PATH'] ?? '/var/www/aptechki.ru/assets/';
+const uploadPath = ROOT_PATH + '/customerFiles/';
+const repositoryPath = ROOT_PATH + 'fileRepository.log';
+try {
+  accessSync(ROOT_PATH);
+} catch (ex) {
+  mkdirSync(ROOT_PATH, 0o755);
+}
+try {
+  accessSync(uploadPath);
+} catch (ex) {
+  mkdirSync(uploadPath, 0o755);
+}
+try {
+  accessSync(repositoryPath);
+} catch (ex) {
+  writeFileSync(repositoryPath, '[]');
+}
 const LIMIT_FILE = 8 * 1024 * 1024;
 // The Express app is exported so that it can be used by serverless Functions.
 export function app() {
@@ -48,24 +71,16 @@ export function app() {
 
   server.set('view engine', 'html');
   server.set('views', distFolder);
-   
-  // setInterval((r) => {
-  //   getAllCompany().then((r) => {
-  //     company = r;
-  //   });
-  // }, 60 * 60 * 1000);
 
   // INTEGRATION
-  const fileRepository = new FileRepository(
-    '/var/www/aptechki.ru/assets/fileRepository.log'
-  );
+  const fileRepository = new FileRepository(repositoryPath);
   const http = new ICQHttpClient();
-    const companyPromise = CompanyQuery({
-      host: 'localhost',
-      user: 'root',
-      password: 'Saq33rrT',
-      database: 'cito3_aptechki',
-    });
+  const companyPromise = CompanyQuery({
+    host: 'localhost',
+    user: 'root',
+    password: 'Saq33rrT',
+    database: 'cito3_aptechki',
+  });
   const companyRepository = new CompanyRepository();
   const productRepository = new ProductRepository(http);
 
@@ -73,7 +88,7 @@ export function app() {
     console.log('INIT ProductRepository / (first)');
   });
   companyPromise.then((clients) => {
-    console.log("INIT CompanyRepository / (first) " + clients.length);
+    console.log('INIT CompanyRepository / (first) ' + clients.length);
     companyRepository.setCompany(clients);
   });
   server.get('/robots.txt', async (req: any, res: any) => {
@@ -140,7 +155,7 @@ export function app() {
       {},
       { 'user-agent': 'aptechki.ru' }
     );
-    if (categories.status != 0) { 
+    if (categories.status != 0) {
       throw new Error('Временно не работает');
     }
     let aptechkiCategory = [];
@@ -158,7 +173,7 @@ export function app() {
       {},
       { 'user-agent': 'aptechki.ru' }
     );
-    if (categoriy.status != 0) { 
+    if (categoriy.status != 0) {
       throw new Error('Временно не работает');
     }
     return new Category(categoriy.response);
@@ -173,7 +188,7 @@ export function app() {
     }
     return product;
   }
-  server.get('/api/company/', async (req: any, res: any) => { 
+  server.get('/api/company/', async (req: any, res: any) => {
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify(companyRepository.getAllCompany()));
   });
@@ -190,20 +205,22 @@ export function app() {
       )
     );
   });
-  
+
   server.get('/v2/product/popular', async (req: any, res: any) => {
+    console.log("POPULAR");
     let product = productRepository.getPopular();
     res.setHeader('Content-Type', 'application/json');
-    res.send(
-      JSON.stringify(
-        product.map((r) => ProductAdapter(r))
-      )
-    );
+    res.send(JSON.stringify(product.map((r) => ProductAdapter(r))));
   });
 
   server.get('/api/product/search', async (req: any, res: any) => {
     let query = req.query['q'];
+    query = query
+      .split(' ')
+      .map((r: string) => r.replace(/(ная|ное|ая|ое|ые|[аяоеьы])$/, ''))
+      .join('|');
     let reg = new RegExp('(' + query + ')', 'i');
+    console.log(req.query['q'], query, reg);
     let product = await getAllProducts();
     res.setHeader('Content-Type', 'application/json');
     res.send(
@@ -212,7 +229,10 @@ export function app() {
           .filter((r: any) => !r.exclude)
           .sort((r: any, l: any) => r.regularPrice - l.regularPrice)
           .map((r) => ProductAdapter(r))
-          .filter((r) => reg.test(r.title) || reg.test(r.subtitle))
+          .filter(
+            (r) =>
+              reg.test(r.title) || reg.test(r.subtitle) || reg.test(r.keywords)
+          )
       )
     );
   });
@@ -414,6 +434,10 @@ export function app() {
       );
       // Pапрос
       res.setHeader('Content-Length', Buffer.byteLength(pdf, 'latin1'));
+      res.setHeader(
+        'Link',
+        `<https://aptechki.ru/api/pdf/${id}>; rel="canonical"`
+      );
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader(
         'Content-Disposition',
@@ -469,8 +493,8 @@ export function app() {
       req,
       providers: [
         { provide: APP_BASE_HREF, useValue: req.baseUrl },
-        { provide: "ProductRepository", useValue: productRepository },
-        { provide: "CompanyRepository", useValue: companyRepository }
+        { provide: 'ProductRepository', useValue: productRepository },
+        { provide: 'CompanyRepository', useValue: companyRepository },
       ],
     });
   });

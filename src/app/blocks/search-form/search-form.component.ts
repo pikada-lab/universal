@@ -23,4 +23,10 @@ export class SearchFormComponent implements OnInit {
       this.search.emit(r);
     });
   }
+  enter(event: KeyboardEvent) {
+    console.log(event.code);
+    if(event.code == 'Enter') {
+      this.startSearch();
+    }
+  }
 }

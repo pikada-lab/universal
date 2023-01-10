@@ -60,7 +60,7 @@
     </div>
 
     <!-- start boxing -->
-    <ng-container *ngIf="product">
+    <ng-container *ngIf="product && caseId">
       <app-boxing
         *ngIf="cases"
         [cases]="cases"

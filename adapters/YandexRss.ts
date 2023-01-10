@@ -1,4 +1,4 @@
-import { Products } from 'src/app/models'; 
+import { Products } from 'src/app/models';
 import { MDUtilit } from './MDUtilit';
 
 export class YandexRss {
@@ -14,7 +14,10 @@ export class YandexRss {
     );
     body += this.addString(`<channel>`, 1);
     body += this.getChannelContent();
-    body += this.products.map(r => this.getItemContent(r)).join("\n"); 
+    body += this.getHome();
+    body += this.getProducts(this.products);
+    body += this.products.map((r) => this.getItemContent(r)).join('\n');
+
     body += this.addString(`</channel>`, 1);
     body += this.addString(`</rss>`);
     return body;
@@ -57,6 +60,76 @@ export class YandexRss {
     return content;
   }
 
+  getHome() {
+    let content = `<item turbo="true">\n`;
+    content += ' <turbo:extendedHtml>true</turbo:extendedHtml>';
+
+    content += this.addSimpleTag(
+      'pubDate',
+      new Date('2022-04-28').toUTCString(),
+      3
+    );
+    content += ' <link>https://aptechki.ru/</link>\n';
+    content += ' <turbo:content>\n<![CDATA[';
+    content += this.getMdContent({
+      title: 'Аптечки ру',
+      subtitle:
+        'Мы поставляем аптечки, соответствующие актуальным приказам по России уже более 10 лет. С доставкой в офис, на склад и производство, в том числе укладку неотложной помощи по приказу МЗ РФ номер 1183н, Антишок, посиндомные. Состав аптечек и наличае товара уточняйте у менеджера.',
+      img: 'https://aptechki.ru/assets/logo.apt2@2x.png',
+      text: `
+      # Укомплектуем аптечку по вашему заказу
+
+      Мы поставляем аптечки, соответствующие актуальным приказам по России уже более 10 лет. С доставкой в офис, на склад и производство, в том числе укладку неотложной помощи по приказу МЗ РФ номер 1183н, Антишок, посиндомные. Состав аптечек и наличае товара уточняйте у менеджера.
+
+      <a href='https://aptechki.ru/products/'>Смотреть все аптечки</a>
+      `,
+    } as any);
+    content += ' <h1>Укомплектуем аптечку по вашему заказу</h1>';
+    content +=
+      ' <p>Мы поставляем аптечки, соответствующие актуальным приказам по России уже более 10 лет. С доставкой в офис, на склад и производство, в том числе укладку неотложной помощи по приказу МЗ РФ номер 1183н, Антишок, посиндомные. Состав аптечек и наличае товара уточняйте у менеджера.</p>';
+    content +=
+      " <p><a href='https://aptechki.ru/products/'>Смотреть все аптечки</a></p>";
+    content += ' ]]> </turbo:content>\n';
+    content += ' ';
+    return content + `</item>`;
+  }
+
+  getProducts(products: Products[]) {
+    let content = `<item turbo="true">\n`;
+    content += ' <turbo:extendedHtml>true</turbo:extendedHtml>';
+
+    content += this.addSimpleTag(
+      'pubDate',
+      new Date('2022-01-01').toUTCString(),
+      3
+    );
+    content += ' <link>https://aptechki.ru/products/</link>\n';
+    content += ' <turbo:content>\n<![CDATA[';
+    content += this.getMdContent({
+      title: 'Аптечки ру',
+      subtitle:
+        'Мы поставляем аптечки, соответствующие актуальным приказам по России уже более 10 лет. С доставкой в офис, на склад и производство, в том числе укладку неотложной помощи по приказу МЗ РФ номер 1183н, Антишок, посиндомные. Состав аптечек и наличае товара уточняйте у менеджера.',
+      img: 'https://aptechki.ru/assets/logo.apt2@2x.png',
+      text:
+        `
+      # Аптечки
+  ` +
+        products.map(
+          (r) =>
+            `<a href='https://aptechki.ru/products/${r.id}'>${r.title}</a>
+ 
+            `
+        ),
+    } as any);
+    content += ' <h1>Укомплектуем аптечку по вашему заказу</h1>';
+    content +=
+      ' <p>Мы поставляем аптечки, соответствующие актуальным приказам по России уже более 10 лет. С доставкой в офис, на склад и производство, в том числе укладку неотложной помощи по приказу МЗ РФ номер 1183н, Антишок, посиндомные. Состав аптечек и наличае товара уточняйте у менеджера.</p>';
+    content +=
+      " <p><a href='https://aptechki.ru/products/'>Смотреть все аптечки</a></p>";
+    content += ' ]]> </turbo:content>\n';
+    content += ' ';
+    return content + `</item>`;
+  }
   private getMetricsContent(item: Products) {
     let content = `<breadcrumb url="https://aptechki.ru/" text="Домашняя"/>`;
     content += `<breadcrumb url="https://aptechki.ru/products" text="Аптечки"/>`;
@@ -81,7 +154,7 @@ export class YandexRss {
       <img src="${item.img}"/>
   </figure>
   <menu>
-      <a href="https://aptechki.ru/home">Домашняя</a>
+      <a href="https://aptechki.ru/">Домашняя</a>
       <a href="https://aptechki.ru/products">Аптечки</a>
       <a href="https://aptechki.ru/clients">Наши клиенты</a>
       <a href="https://aptechki.ru/contacts">Контакты</a>

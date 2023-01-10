@@ -19,9 +19,11 @@ export class ProductRepository {
       this.prepare().then(() => {
         console.log('ceshes updated');
       });
-    }, 1000 * 60 * 15);
+    }, 1000 * 60 * 1);
   }
   async prepare() {
+    this.productIndex.clear();
+    this.produt2categoryIndex.clear();
     await this.preperCategoryAid();
     await this.preperCases();
     await this.preperAllProducts();
@@ -52,7 +54,7 @@ export class ProductRepository {
 
   async preperAllProducts() {
     const category = this.getCategoryAid();
-    let product = [];
+    let product = []; 
     for (let cat of category) {
       const categoryId = +cat.categoryID;
       let productCat = await this.preperProductByCategory(categoryId);
@@ -79,7 +81,7 @@ export class ProductRepository {
       { 'user-agent': 'aptechki.ru' }
     );
     if (!result) result = [];
-    return result.map((r) => new UniversalProduct(r.id).initState(r));
+    return result.filter(p => !p.exclude).map((r) => new UniversalProduct(r.id).initState(r));
   }
 
   getCases() {
@@ -107,7 +109,7 @@ export class ProductRepository {
     return this.getAllCategories().find((r) => r.categoryID == id);
   }
   getPopular(): UniversalProduct[] {
-    return this.products
+    return this.getAllProducts()
       .filter((r) => r.rare)
       .filter((r: any) => !r.exclude)
       .sort((r: any, l: any) => r.regularPrice - l.regularPrice);

@@ -36,7 +36,7 @@ import { ProductService } from 'src/app/business';
 export class ProductComponent implements OnInit {
   public count: number = 1;
   public product: Products | undefined;
-  public caseId = 53385;
+  public caseId?: number;
   public isOnCart = false;
 
   public countSpecial: number = 1;
@@ -78,10 +78,11 @@ export class ProductComponent implements OnInit {
     this.loading = true;
     this.scrollTop();
     this.route.queryParams.subscribe((params: Params) => {
-      this.caseId = +(params['box'] ?? this.product!.defaultCase); 
+      this.caseId = +params['box'] || this.caseId;
+      console.log('caseId 1', this.caseId);
     });
     this.route.params.subscribe((params: Params) => {
-      const productId = +params['id']; 
+      const productId = +params['id'];
       this.updateCanonical(productId);
       this.scrollTop();
       forkJoin([
@@ -114,7 +115,7 @@ export class ProductComponent implements OnInit {
       let item = this.cartService.get(this.product, false);
       if (item) {
         item.qtty = r;
-        item.caseId = +this.caseId;
+        item.caseId = +this.caseId!;
         let box = this.cases.find((r) => r.id == this.caseId);
         this.currentCase = box;
         this.cartService.save();
@@ -124,7 +125,7 @@ export class ProductComponent implements OnInit {
         this.cartService.add(
           this.product,
           r,
-          +this.caseId,
+          +this.caseId!,
           false,
           this.product.price,
           box?.price ?? 0
@@ -154,7 +155,7 @@ export class ProductComponent implements OnInit {
           item = this.cartService.add(
             this.product,
             qtty,
-            +this.caseId,
+            +this.caseId!,
             true,
             this.product.price,
             0
@@ -196,10 +197,12 @@ export class ProductComponent implements OnInit {
     if (isPlatformServer(this.platformId)) {
       if (this.request.res) {
         this.request.res.set('Link', `<${canonicalUrl}>; rel="canonical"`);
-        const element = this.document.createElement('link') as HTMLLinkElement;  
+        const element = this.document.createElement('link') as HTMLLinkElement;
         element.setAttribute('rel', 'canonical');
         element.setAttribute('href', canonicalUrl);
-        (this.document.getElementsByTagName("link")[0] as HTMLHeadElement).after(element);
+        (
+          this.document.getElementsByTagName('link')[0] as HTMLHeadElement
+        ).after(element);
       }
     }
   }
@@ -209,6 +212,10 @@ export class ProductComponent implements OnInit {
     this.meta.updateTag({
       name: 'description',
       content: this.product!.subtitle ?? 'Медицинская укладка',
+    });
+    this.meta.updateTag({
+      name: 'keywords',
+      content: this.product!.keywords ?? 'Медицинская укладка, Аптечка',
     });
     this.meta.updateTag({
       property: 'og:title',
@@ -225,10 +232,17 @@ export class ProductComponent implements OnInit {
       content: this.product!.subtitle ?? 'Медицинская укладка',
     });
 
+    const canonicalUrl = 'https://aptechki.ru/products/' + this.product?.id;
+    this.meta.updateTag({
+      property: 'og:url',
+      content: canonicalUrl
+
+    })
+
     this.img = this.ssd.bypassSecurityTrustUrl(this.product!.originalImg);
     this.caseId = this.caseId ?? this.product!.defaultCase;
-    console.log('this.caseId', this.caseId, this.product!.defaultCase);
-
+    console.log('caseId 2', this.caseId);
+    this.setCaseForce(this.caseId);
     if (this.platformId == 'browser') {
       let item = this.cartService.get(this.product!, false);
       let itemSpecial = this.cartService.get(this.product!, true);
@@ -251,7 +265,7 @@ export class ProductComponent implements OnInit {
       if (this.caseId != -1) {
         const caseAid = this.cases.find((pr) => pr.id == this.caseId);
         if (caseAid) {
-          this.img = this.ssd.bypassSecurityTrustUrl(caseAid!.originalImg);
+          // this.img = this.ssd.bypassSecurityTrustUrl(caseAid!.originalImg);
         }
       }
     }
@@ -262,18 +276,21 @@ export class ProductComponent implements OnInit {
   currentCase?: Products;
   changeCaseId(caseId: number) {
     if (this.caseId == caseId) return;
+    this.setCaseForce(caseId);
+  }
+  private setCaseForce(caseId: number) {
     this.caseId = caseId;
     let box = this.cases.find((r) => r.id == this.caseId);
     this.saveCase();
     this.currentCase = box;
-    if (box) this.img = this.ssd.bypassSecurityTrustUrl(box.originalImg);
+    // if (box) this.img = this.ssd.bypassSecurityTrustUrl(box.originalImg);
   }
 
   saveCase() {
     if (!this.product) return;
     let item = this.cartService.get(this.product, false);
     if (!item) return;
-    item.caseId = +this.caseId;
+    item.caseId = +this.caseId!;
     item.priceCase =
       this.cases?.find((r) => {
         return r.id == item?.caseId;

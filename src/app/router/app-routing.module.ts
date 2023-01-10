@@ -23,7 +23,7 @@ const routes: Routes = [
   { path: 'medicine/yui_1', redirectTo: 'products/52687', pathMatch: 'full'},
   { path: 'medicine/posindroms', redirectTo: 'products/1548', pathMatch: 'full'},   
   { path: 'news', redirectTo: 'clients', pathMatch: 'full'},  
-  { path: '**', redirectTo: '/404'}
+  { path: '**', component: ErrorNotFoundComponent}
 ];
 
 @NgModule({
